@@ -1,0 +1,14 @@
++xampp
+    - php 
+    -apache
+    -mySQL
+
+eclipse: 4.3.1
+Android SDK 
+
+
+Source structure: Liem
+  Server: Liem
+  Client:  Liem
+  DB: Nam
+
