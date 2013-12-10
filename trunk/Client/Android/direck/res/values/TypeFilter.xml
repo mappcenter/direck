@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+  tools:ignore="MissingTranslation">
+    <string-array name="ItemType" >
+        <item >ALL</item>
+        <item >Share</item>
+        <item >Be Shared</item>
+        <item >Bookmark</item>
+    </string-array>
+    
+</resources>

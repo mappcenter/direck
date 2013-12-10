@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PinOnMap" >
+
+     <RelativeLayout
+        android:id="@+id/TitleHome"
+        style="@style/TitleBar" >
+
+        <TextView
+            android:layout_alignBaseline="@+id/btnToFriend"
+            android:text="@string/Map"
+            style="@style/TitleBarText"/>
+
+        <Button
+            android:id="@+id/btnToFriend"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            style="@style/button"
+            android:onClick="DonePin"
+            android:text="@string/done" />
+    </RelativeLayout>
+    
+
+     <fragment
+         android:id="@+id/ItemMap"
+         android:name="com.google.android.gms.maps.SupportMapFragment"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         
+          />
+
+</LinearLayout>

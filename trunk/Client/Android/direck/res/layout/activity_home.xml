@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    tools:context=".Home" >
+
+    <RelativeLayout
+        android:id="@+id/TitleHome"
+        style="@style/TitleBar" 
+        >
+        
+        <ImageButton
+            android:id="@+id/imgHome"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/contentDescription"
+            android:background="@drawable/home" />
+
+        <TextView
+            style="@style/TitleBarText"
+            android:layout_alignBaseline="@+id/typeFilter"
+            android:layout_toRightOf="@+id/imgHome"
+            android:layout_marginLeft="3dp"
+            android:text="@string/Home_Title" />
+
+        <Spinner
+            android:id="@+id/typeFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/spinner_back"/>
+
+    </RelativeLayout>
+
+    <com.direck.utils.PullToRefreshListView
+        android:id="@+id/listItem"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TitleHome"
+        android:divider="#FFFFFF"
+        android:dividerHeight="3dp"
+        android:listSelector="@drawable/item_list" >
+    </com.direck.utils.PullToRefreshListView>
+
+    <ImageButton
+        android:id="@+id/btnShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/position"
+        android:contentDescription="@string/button_share"
+        android:onClick="shareNew" />
+
+</RelativeLayout>
