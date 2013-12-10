@@ -1,0 +1,63 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    tools:context=".FriendList" >
+
+    <RelativeLayout
+        android:id="@+id/TitleHome"
+        style="@style/TitleBar" >
+        
+         <ImageButton
+            android:id="@+id/imgHome"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="eventHome"
+            android:contentDescription="@string/contentDescription"
+            android:background="@drawable/home" />
+
+        <TextView
+            android:layout_alignBaseline="@+id/btnShare"
+            android:text="@string/Friend_Title"
+            style="@style/TitleBarText"/>
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            style="@style/button"
+            android:onClick="share"
+            android:text="@string/button_share" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/filterFriend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TitleHome"
+        android:hint="@string/searchFriend"
+        android:inputType="textVisiblePassword" 
+        android:drawableRight="@drawable/search">
+
+        <requestFocus />
+    </EditText>
+
+    <ListView
+        android:id="@+id/listDBContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/filterFriend" 
+        android:divider="#FFFFFF"
+        android:dividerHeight="1dp"
+        android:listSelector="@drawable/friend_list">
+    </ListView>
+
+</RelativeLayout>

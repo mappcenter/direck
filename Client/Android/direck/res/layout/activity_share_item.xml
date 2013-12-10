@@ -1,0 +1,83 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ShareItem" >
+
+    <RelativeLayout
+        android:id="@+id/TitleHome"
+        style="@style/TitleBar" >
+
+        <ImageButton
+            android:id="@+id/imgHome"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="eventHome"
+            android:contentDescription="@string/contentDescription"
+            android:background="@drawable/home" />
+
+        <TextView
+            style="@style/TitleBarText"
+            android:layout_alignBaseline="@+id/btnToFriend"
+            android:text="@string/Share_Title" />
+
+        <Button
+            android:id="@+id/btnToFriend"
+            style="@style/button"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:onClick="eventToFriend"
+            android:text="@string/toFriend" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/txtItemName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TitleHome"
+        android:hint="@string/ItemName"
+        android:inputType="text" >
+
+        <requestFocus />
+    </EditText>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/Address"
+        android:layout_below="@+id/txtItemName" >
+
+        <EditText
+            android:id="@+id/txtItemAddress"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:hint="@string/ItemAddress"
+            android:layout_weight="1"
+            android:lines="2"
+             />
+<!--    <Button
+            android:id="@+id/btnGenAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            
+            style="@style/button"
+            android:onClick="eventGenAddress"
+            android:text="@string/button_gen" />
+-->
+    </LinearLayout>
+
+    <fragment
+        android:id="@+id/ItemMap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/Address" />
+
+</RelativeLayout>
