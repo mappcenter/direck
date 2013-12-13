@@ -43,31 +43,30 @@ function fCreateAccount(){
 function fUploadContact(){
 	$accountId = isset($_GET['accountid'])?$_GET['accountid']:'';
 	$contactStr = isset($_GET['contact'])?$_GET['contact']:'';
-
-	if(!(strlen($accountId)>0 && strlen($contactStr)>0)){
-		return Array("ErrorCode"=>3,"Message"=>"Invalid Account","Data"=>"");
+	if(!(strlen($accountId)>0)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid account", "Data"=>"");
 	}
-
 	$ContactController = new ContactDA;
-
-	$contactItem = explode("|", $contactStr);
-	if(count($contactItem)>0){
-		for($i=0;$i<count($contactItem);$i++){
-			$contactItemDetail = explode("::", $contactItem[$i]);
-
-			//Check Existed PhoneNumber
-			if(!$ContactController->checkPhoneNumber($contactItemDetail[1])){
-				//Insert If OK
-				$ContactController->insert($accountId, $contactItemDetail[0], $contactItemDetail[1], 0);
-			}			
+	if (strlen($contactStr)>0) {
+		
+		$contactItem = explode("|", $contactStr);
+		if(count($contactItem)>0){
+			for($i=0;$i<count($contactItem);$i++){
+				if (strlen($contactItem[$i]) >0 ) {
+					$contactItemDetail = explode("::", $contactItem[$i]);
+					//Check Existed PhoneNumber
+					if(!$ContactController->checkPhoneNumber($contactItemDetail[1])){
+						//Insert If OK
+						$ContactController->insert($accountId, $contactItemDetail[0], $contactItemDetail[1], 0);
+					}			
+				}
+			}
 		}
 	}
-
 	$listContact = $ContactController->getListByAccountId($accountId);
 	if(count($listContact)>0){
 		return Array("ErrorCode"=>1,"Message"=>"Upload Successful", "Data"=>$listContact);
 	}
-
     // return value
     return Array("ErrorCode"=>3,"Message"=>"Upload UnSuccessful", "Data"=>"");
 }
@@ -78,34 +77,12 @@ function fGetListPoint(){
 	if(!(strlen($accountId)>0)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Account","Data"=>"");
 	}
-	$ShareInfoController = new ShareInfoDA;
-	$PointController = new PointDA;
 	$PointShareInfoController = new PointShareInfoEnt;
-	$listShareInfo = $ShareInfoController->getListByAccountId($accountId);
-
-	if(count($listShareInfo)>0){
-		$strPointIDs = "0";
-		$listPointShareInfoEnt = array();
-		for($i=0;$i<count($listShareInfo);$i++){
-			if(($listShareInfo[$i]->Id)>0){
-				$strPointIDs = $strPointIDs.",".$listShareInfo[$i]->Id;
-			}			
-		}
-		$listPoint = $PointController->getListByIds($strPointIDs);
-
-		for($j=0;$j<count($listShareInfo);$j++){
-			if(($listShareInfo[$j]->Id)>0){
-				$tmpShareId = "'key_".$listShareInfo[$j]->Id."'";
-				$tmpPointShareInfoEntX = new PointShareInfoEnt;
-				$tmpPointShareInfoEnt = $tmpPointShareInfoEntX->insertView($listPoint[$tmpShareId], $listShareInfo[$j]);
-
-				$listPointShareInfoEnt[] = $tmpPointShareInfoEnt;
-			}			
-		}
-
+	$listPointShareInfoEnt = array();
+	$listPointShareInfoEnt = $PointShareInfoController->getListEnt($accountId);
+	if(count($listPointShareInfoEnt)>0){
 		return Array("ErrorCode"=>0,"Message"=>"Get List Successful", "Data"=>$listPointShareInfoEnt);
 	}
-
     // return value
     return Array("ErrorCode"=>1,"Message"=>"No Point", "Data"=>"");
 }
