@@ -68,11 +68,11 @@ class ContactDA {
 		return $this;
 	}
 	
-	public function checkPhoneNumber($InputPhoneNumber){
+	public function checkPhoneNumber($InputPhoneNumber,$accountId){
     	global $mysql, $tb_prefix;
 		$data = 0;
 		$order_sql = "ORDER BY ID ASC";
-		$where_sql = "WHERE `ContactNumber` = '".$InputPhoneNumber."'";
+		$where_sql = "WHERE `ContactNumber` = '".$InputPhoneNumber."' and `accountID` ='".$accountId."'";
 
 		$query = $mysql->query("SELECT Count(ID) AS Total FROM `".$tb_prefix."contact` $where_sql $order_sql ;");
 		while ($rs = $mysql->fetch_array($query)) {
