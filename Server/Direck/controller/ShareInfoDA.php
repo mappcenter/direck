@@ -13,9 +13,15 @@ class ShareInfoDA {
 	public $ViewStatus = 0;
 	public $CreatedDate = 0;
 
-	public function insert($iAccountID, $iPointID, $iFriendID, $iType){
+	public function insert($iAccountID, $iPointID, $iFriendID, $iType, $ViewStatus){
 		global $mysql, $tb_prefix;
-		$mysql->query("INSERT INTO `".$tb_prefix."sharedinfo` (`AccountID`, `PointID`, `FriendID`, `Type`, `ViewStatus`, `CreatedDate`) VALUES ('".$iAccountID."', '".$iPointID."', '".$iFriendID."', '".$iType."', 0, '".time()."')");
+		$mysql->query("INSERT INTO `".$tb_prefix."sharedinfo` (`AccountID`, `PointID`, `FriendID`, `Type`, `ViewStatus`, `CreatedDate`) VALUES ('".$iAccountID."', '".$iPointID."', '".$iFriendID."', '".$iType."', '".$ViewStatus."', '".time()."')");
+		return true;
+	}
+	
+	public function updateViewStatus($shareID){
+		global $mysql, $tb_prefix;
+		$mysql->query("UPDATE `".$tb_prefix."sharedinfo` SET `ViewStatus`=1 where `ID`='".$shareID."'");
 		return true;
 	}
 
