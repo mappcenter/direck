@@ -136,6 +136,41 @@ function fSharePoint(){
 function fBookmarkPoint(){
 	$accountId = isset($_GET['accountid'])?$_GET['accountid']:'';
 	$pointId = isset($_GET['itemid'])?$_GET['itemid']:'';
+	$pointName = isset($_GET['pointname'])?$_GET['pointname']:'';
+	$pointLocX = isset($_GET['locx'])?$_GET['locx']:'';
+	$pointLocY = isset($_GET['locy'])?$_GET['locy']:'';
+	$pointAddress = isset($_GET['address'])?$_GET['address']:'';
+
+
+	if(!(strlen($accountId)>0)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Account ","Data"=>"");
+	}
+
+	$ShareInfoController = new ShareInfoDA;
+	$PointController = new PointDA;
+	$newPointId = 0;
+	if(intval($pointId)>0){
+		$newPointId = intval($pointId);
+	}else{
+		if(!(strlen($pointName)>0)){
+			return Array("ErrorCode"=>3,"Message"=>"Invalid Location","Data"=>"");
+		}
+		$newPointId = $PointController->insert($pointName, $pointAddress, $pointLocX, $pointLocY, $accountId);
+		if(!($newPointId>0)){
+			return Array("ErrorCode"=>3,"Message"=>"Create Point Fail","Data"=>"");
+		}
+	}
+	
+	$ShareInfoController->insert($accountId, $newPointId, $accountId, 2,1); //view status : 1 is viewed already
+	
+    // return value
+    return Array("ErrorCode"=>1,"Message"=>"Share Successful", "Data"=>"");
+}
+
+
+function fBookmarkLocation(){
+	$accountId = isset($_GET['accountid'])?$_GET['accountid']:'';
+	$pointId = isset($_GET['itemid'])?$_GET['itemid']:'';
 
 
 	if(!(strlen($accountId)>0)){
