@@ -13,11 +13,38 @@ include_once('./controller/PointShareInfoEnt.php');
 # ErrorCode = 3 : UnSuccess - With Message
 
 #========== FUNCTION ===========#
+function fCheckToken($iFunction, $iParam, $iTime, $iToken){
+	// echo $iFunction."::".$iParam."::".$iTime."::".$iToken."<br>";
+	if(!constant("CHECK_TOKEN")){
+		return true;
+	}
+
+	$currentTime = time();
+	//echo $currentTime."::".($iTime + (60*60))."<br>";
+	if($currentTime > $iTime + 3600){
+		return false;
+	}
+	$ServerToken = strtoupper(md5($iFunction.$iParam.constant("MD5_KEY").$iTime));
+	$ClientToken = strtoupper($iToken);
+	//echo $ServerToken."::".$ClientToken."<br>";
+	if($serverToken==$iClientToken){
+		return true;
+	}
+
+}
 
 #========== HOME PROCEDUCE ===========#
 function fCreateAccount(){
 	$userName = isset($_GET['name'])?$_GET['name']:'';
 	$userPhoneNumber = isset($_GET['phonenumber'])?$_GET['phonenumber']:'';
+
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $userName, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
 
 	if(!(strlen($userName)>0 && strlen($userPhoneNumber)>0)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Name or PhoneNumber","Data"=>"");
@@ -40,9 +67,43 @@ function fCreateAccount(){
 	return Array("ErrorCode"=>1,"Message"=>"Create Successful", "Data"=>$userValue);
 }
 
+function fUpdateTokenKey(){
+	$accountId = isset($_GET['accountid'])?$_GET['accountid']:'';
+	$tokenKey = isset($_GET['tokenkey'])?$_GET['tokenkey']:'';
+
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
+
+	if(!(strlen($accountId)>0)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid account", "Data"=>"");
+	}
+	$AccountController = new AccountDA;
+	if (strlen($tokenKey)>0) {
+		$AccountController->updateTokenkey($accountId, $tokenKey);
+		
+	}
+
+    // return value
+    return Array("ErrorCode"=>1,"Message"=>"Update Successful", "Data"=>"");
+}
+
 function fUploadContact(){
 	$accountId = isset($_GET['accountid'])?$_GET['accountid']:'';
 	$contactStr = isset($_GET['contact'])?$_GET['contact']:'';
+
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
+
 	if(!(strlen($accountId)>0)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid account", "Data"=>"");
 	}
@@ -74,6 +135,14 @@ function fUploadContact(){
 function fGetListPoint(){
 	$accountId = isset($_GET['accountid'])?$_GET['accountid']:'';
 
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
+
 	if(!(strlen($accountId)>0)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Account","Data"=>"");
 	}
@@ -95,6 +164,14 @@ function fSharePoint(){
 	$pointLocX = isset($_GET['locx'])?$_GET['locx']:'';
 	$pointLocY = isset($_GET['locy'])?$_GET['locy']:'';
 	$pointAddress = isset($_GET['address'])?$_GET['address']:'';
+
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
 
 
 	if(!(strlen($accountId)>0) || !(strlen($friendIds)>0)){
@@ -133,6 +210,31 @@ function fSharePoint(){
     return Array("ErrorCode"=>1,"Message"=>"Share Successful", "Data"=>"");
 }
 
+function fDeletePoint(){
+	$shareId = isset($_GET['shareid'])?$_GET['shareid']:'';
+
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $shareId, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
+
+	if(!(strlen($shareId)>0)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Point ","Data"=>"");
+	}
+
+	$ShareInfoController = new ShareInfoDA;
+	if(intval($shareId)>0){
+		if($ShareInfoController->delete($shareId)){
+			return Array("ErrorCode"=>1,"Message"=>"Delete Successful", "Data"=>"");
+		}
+	}
+    // return value
+    return Array("ErrorCode"=>3,"Message"=>"Delete Fail","Data"=>"");
+}
+
 function fBookmarkPoint(){
 	$accountId = isset($_GET['accountid'])?$_GET['accountid']:'';
 	$pointId = isset($_GET['itemid'])?$_GET['itemid']:'';
@@ -140,6 +242,14 @@ function fBookmarkPoint(){
 	$pointLocX = isset($_GET['locx'])?$_GET['locx']:'';
 	$pointLocY = isset($_GET['locy'])?$_GET['locy']:'';
 	$pointAddress = isset($_GET['address'])?$_GET['address']:'';
+
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
 
 
 	if(!(strlen($accountId)>0)){
@@ -172,6 +282,14 @@ function fBookmarkLocation(){
 	$accountId = isset($_GET['accountid'])?$_GET['accountid']:'';
 	$pointId = isset($_GET['itemid'])?$_GET['itemid']:'';
 
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
+
 
 	if(!(strlen($accountId)>0)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Account ","Data"=>"");
@@ -191,6 +309,14 @@ function fBookmarkLocation(){
 
 function fUpdateViewStatus(){
 	$shareID = isset($_GET['shareid'])?$_GET['shareid']:'';
+
+	//Check Token
+	$clientAction = isset($_GET['action'])?$_GET['action']:'';
+	$clientTime = isset($_GET['time'])?$_GET['time']:'';
+	$clientToken= isset($_GET['token'])?$_GET['token']:'';
+	if(!fCheckToken($clientAction, $shareID, $clientTime, $clientToken)){
+		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
+	}
 	
 	if(!(strlen($shareID)>0)) {
 		return Array("ErrorCode"=>3,"Message"=>"Invalid share ID","Data"=>"");
@@ -209,6 +335,7 @@ function fGetNotification(){
 }
 
 function getDefault(){
+	fCheckToken($action, $os, $token, $time);
 	return Array("ErrorCode"=>3,"Message"=>"Invalid Function","Data"=>"");
 }
 
@@ -217,9 +344,11 @@ function getaction(){
 	switch ($action)
 	{
 		case 'create-user':	return fCreateAccount();
+		case 'update-tokenkey':	return fUpdateTokenKey();
         case 'upload-contact':    return fUploadContact();
         case 'get-list-point':    return fGetListPoint();
         case 'share-point':    return fSharePoint();
+        case 'delete-point':    return fDeletePoint();
 		case 'bookmark-point':    return fBookmarkPoint();
 		case 'update-ViewStatus':    return fUpdateViewStatus();
         case 'get-notification':    return fGetNotification();

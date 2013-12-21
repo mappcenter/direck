@@ -29,7 +29,7 @@ class PointDA {
 	public function delete($inputId){
 		global $mysql, $tb_prefix;
 		$mysql->query("DELETE FROM `".$tb_prefix."point` WHERE `ID` = '".$inputId."'");
-		return $true;
+		return true;
 	}
 
 	public function getById($InputId){

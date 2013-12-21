@@ -21,7 +21,13 @@ class AccountDA {
 	public function delete($inputId){
 		global $mysql, $tb_prefix;
 		$mysql->query("DELETE FROM `".$tb_prefix."account` WHERE `ID` = '".$inputId."'");
-		return $true;
+		return true;
+	}
+
+	public function updateTokenkey($iAccountId, $iTokenKey){
+		global $mysql, $tb_prefix;
+		$mysql->query("UPDATE `".$tb_prefix."account` SET `TokenKey`='".$iTokenKey."' WHERE `ID`='".$iAccountId."'");
+		return true;
 	}
 
     public function checkPhoneNumber($InputPhoneNumber){

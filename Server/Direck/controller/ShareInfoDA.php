@@ -28,7 +28,7 @@ class ShareInfoDA {
 	public function delete($inputId){
 		global $mysql, $tb_prefix;
 		$mysql->query("DELETE FROM `".$tb_prefix."sharedinfo` WHERE `ID` = '".$inputId."'");
-		return $true;
+		return true;
 	}
 
 	public function getAll(){
