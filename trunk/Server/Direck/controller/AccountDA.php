@@ -96,5 +96,18 @@ class AccountDA {
 		}
 		return $this;
 	}
+
+	public function getTokenKeyById($InputId){
+		global $mysql, $tb_prefix;
+		$resultToken = "";
+		$where_sql = "WHERE `Status` = 1 AND ID=".$InputId;
+		$order_sql = "ORDER BY ID DESC";
+
+		$query = $mysql->query("SELECT * FROM `".$tb_prefix."account` $where_sql $order_sql ;");
+		while ($rs = $mysql->fetch_array($query)) {
+			$resultToken = $rs['ID'];
+		}
+		return $resultToken;
+	}
 }
 ?>
