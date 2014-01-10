@@ -5,7 +5,7 @@ include_once('./controller/ContactDA.php');
 include_once('./controller/PointDA.php');
 include_once('./controller/ShareInfoDA.php');
 include_once('./controller/PointShareInfoEnt.php');
-
+include_once('./controller/GCM.php');
 #========== DEFINE ===========#
 # ErrorCode = 0 : Success - No Message
 # ErrorCode = 1 : Success - With Message
@@ -18,16 +18,19 @@ function fCheckToken($iFunction, $iParam, $iTime, $iToken){
 	if(!constant("CHECK_TOKEN")){
 		return true;
 	}
+	list($usec, $sec) = explode(" ", microtime());
+    $currentTime = round(((float)$usec + (float)$sec) * 1000);
 
-	$currentTime = time();
-	//echo $currentTime."::".($iTime + (60*60))."<br>";
-	if($currentTime > $iTime + 3600){
+	//$currentTime = time();
+	echo $currentTime."::".($iTime + (60000*60000))."<br>";
+	if($currentTime > $iTime + 3600000000){
 		return false;
 	}
-	$ServerToken = strtoupper(md5($iFunction.$iParam.constant("MD5_KEY").$iTime));
+	$ServerToken = strtoupper(md5($iFunction.constant("MD5_KEY").$iTime));
 	$ClientToken = strtoupper($iToken);
-	//echo $ServerToken."::".$ClientToken."<br>";
-	if($serverToken==$iClientToken){
+	echo "server:".$iFunction.constant("MD5_KEY").$iTime."<br>";
+	echo $ServerToken."::".$ClientToken."<br>";
+	if($ServerToken==$ClientToken){
 		return true;
 	}
 
@@ -200,12 +203,21 @@ function fSharePoint(){
 				//echo $newPointId."".$listFriendId[$x]."<br>";
 				$ShareInfoController->insert($accountId, $newPointId, $tmpFriendId, 0,1); //view status : 1 is viewed already
 				$ShareInfoController->insert($tmpFriendId, $newPointId, $accountId, 1,0); //view status : 0 , not view yet
+				$AccountController = new AccountDA;
+				$friendAccount = $AccountController->getById($tmpFriendId);
+				if($friendAccount){
+					$gcm = new GCM;
+					$registatoin_ids = array($friendAccount->TokenKey);
+					$message = array("direck_msg" => $friendAccount->Name.' shared with you a place');
+					$result = $gcm->send_notification($registatoin_ids, $message);
+				}
+				
 			}
 			
 		}
 	}
 	
-
+ 
     // return value
     return Array("ErrorCode"=>1,"Message"=>"Share Successful", "Data"=>"");
 }
