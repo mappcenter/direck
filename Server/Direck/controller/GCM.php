@@ -1,9 +1,5 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  * Description of GCM
@@ -14,16 +10,14 @@ class GCM {
 
     //put your code here
     // constructor
-    function __construct() {
-        
-    }
+    
 
     /**
      * Sending Push Notification
      */
     public function send_notification($registatoin_ids, $message) {
         // include config
-        include_once('./config/_config.php');
+        include_once ('./config/_config.php');
 
         // Set POST variables
         $url = 'https://android.googleapis.com/gcm/send';

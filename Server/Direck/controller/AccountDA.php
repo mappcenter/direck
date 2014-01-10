@@ -4,6 +4,7 @@ if (!defined('IN_DIRECK')) die("Hack");
 $mysql = new mysql;
 $mysql->connect($config['db_host'],$config['db_user'],$config['db_pass'],$config['db_name']);
 
+
 class AccountDA {
 	public $Id = 0;
 	public $Name = "";
@@ -11,6 +12,7 @@ class AccountDA {
 	public $CreatedDate = "";
 	public $ModifiedDate = "";
 	public $Status = "";
+	public $TokenKey="";
 
 	public function insert($iName, $iPhoneNumber){
 		global $mysql, $tb_prefix;
@@ -58,14 +60,40 @@ class AccountDA {
 			$tmpAccount->CreatedDate = $rs['CreatedDate'];
 			$tmpAccount->ModifiedDate = $rs['ModifiedDate'];
 			$tmpAccount->Status = $rs['Status'];
+			$tmpAccount->TokenKey = $rs['TokenKey'];
 			$data[] = $tmpAccount;
 		}
 		return $data;
 	}
+	
+	public function getAllWithToken(){
+		global $mysql, $tb_prefix;
+		$data = array();
+		$order_sql = "ORDER BY ID ASC";
+		$where_sql = "WHERE TokenKey != ''";
+
+		$query = $mysql->query("SELECT * FROM `".$tb_prefix."account` $where_sql $order_sql ;");
+		/*
+		while ($rs = $mysql->fetch_array($query)) {
+			$tmpAccount = new AccountDA;
+			$tmpAccount->Id = $rs['ID'];
+			$tmpAccount->Name = $rs['Name'];
+			$tmpAccount->PhoneNumber = $rs['PhoneNumber'];
+			$tmpAccount->CreatedDate = $rs['CreatedDate'];
+			$tmpAccount->ModifiedDate = $rs['ModifiedDate'];
+			$tmpAccount->Status = $rs['Status'];
+			$tmpAccount->TokenKey = $rs['TokenKey'];
+			$data[] = $tmpAccount;
+		}
+		return $data;
+		*/
+		return $query;
+	}
 
 	public function getById($InputId){
 		global $mysql, $tb_prefix;
-		$where_sql = "WHERE `Status` = 1 AND ID=".$InputId;
+		//$where_sql = "WHERE `Status` = 1 AND ID=".$InputId;
+		$where_sql = "WHERE  ID=".$InputId;
 		$order_sql = "ORDER BY ID DESC";
 
 		$query = $mysql->query("SELECT * FROM `".$tb_prefix."account` $where_sql $order_sql ;");
@@ -76,9 +104,10 @@ class AccountDA {
 			$this->CreatedDate = $rs['CreatedDate'];
 			$this->ModifiedDate = $rs['ModifiedDate'];
 			$this->Status = $rs['Status'];
+			$this->TokenKey = $rs['TokenKey'];
 		}
 		return $this;
-	}
+	} 
 
 	public function getByPhoneNumber($InputPhoneNumber){
 		global $mysql, $tb_prefix;
@@ -93,21 +122,9 @@ class AccountDA {
 			$this->CreatedDate = $rs['CreatedDate'];
 			$this->ModifiedDate = $rs['ModifiedDate'];
 			$this->Status = $rs['Status'];
+			$this->TokenKey = $rs['TokenKey'];
 		}
 		return $this;
-	}
-
-	public function getTokenKeyById($InputId){
-		global $mysql, $tb_prefix;
-		$resultToken = "";
-		$where_sql = "WHERE `Status` = 1 AND ID=".$InputId;
-		$order_sql = "ORDER BY ID DESC";
-
-		$query = $mysql->query("SELECT * FROM `".$tb_prefix."account` $where_sql $order_sql ;");
-		while ($rs = $mysql->fetch_array($query)) {
-			$resultToken = $rs['ID'];
-		}
-		return $resultToken;
 	}
 }
 ?>

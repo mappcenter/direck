@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('IN_DIRECK')) die("Hack");
 class mysql { 
 	var $link_id;
@@ -7,6 +7,8 @@ class mysql {
 	function connect($db_host, $db_username, $db_password, $db_name) {
 		$this->link_id = @mysql_connect($db_host, $db_username, $db_password);
 		mysql_query("SET character_set_results=utf8", $this->link_id);
+		mysql_query("SET character_set_client=utf8", $this->link_id);
+		mysql_query("SET character_set_connection=utf8", $this->link_id);
 		if ($this->link_id)
 		{
 			if (@mysql_select_db($db_name, $this->link_id)) return $this->link_id;
