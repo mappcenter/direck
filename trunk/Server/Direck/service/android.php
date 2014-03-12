@@ -22,14 +22,14 @@ function fCheckToken($iFunction, $iParam, $iTime, $iToken){
     $currentTime = round(((float)$usec + (float)$sec) * 1000);
 
 	//$currentTime = time();
-	echo $currentTime."::".($iTime + (60000*60000))."<br>";
+	//echo $currentTime."::".($iTime + (60000*60000))."<br>";
 	if($currentTime > $iTime + 3600000000){
 		return false;
 	}
 	$ServerToken = strtoupper(md5($iFunction.constant("MD5_KEY").$iTime));
 	$ClientToken = strtoupper($iToken);
-	echo "server:".$iFunction.constant("MD5_KEY").$iTime."<br>";
-	echo $ServerToken."::".$ClientToken."<br>";
+	//echo "server:".$iFunction.constant("MD5_KEY").$iTime."<br>";
+	//echo $ServerToken."::".$ClientToken."<br>";
 	if($ServerToken==$ClientToken){
 		return true;
 	}
@@ -204,11 +204,13 @@ function fSharePoint(){
 				$ShareInfoController->insert($accountId, $newPointId, $tmpFriendId, 0,1); //view status : 1 is viewed already
 				$ShareInfoController->insert($tmpFriendId, $newPointId, $accountId, 1,0); //view status : 0 , not view yet
 				$AccountController = new AccountDA;
+				$AccountController1 = new AccountDA;
 				$friendAccount = $AccountController->getById($tmpFriendId);
+				$hostAccount = $AccountController1->getById($accountId);
 				if($friendAccount){
 					$gcm = new GCM;
 					$registatoin_ids = array($friendAccount->TokenKey);
-					$message = array("direck_msg" => $friendAccount->Name.' shared with you a place');
+					$message = array("direck_msg" => $hostAccount->Name.' shared with you a location');
 					$result = $gcm->send_notification($registatoin_ids, $message);
 				}
 				
