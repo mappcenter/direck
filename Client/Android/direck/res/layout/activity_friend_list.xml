@@ -22,17 +22,25 @@
             android:background="@drawable/home" />
 
         <TextView
-            android:layout_alignBaseline="@+id/btnShare"
-            android:text="@string/Friend_Title"
-            style="@style/TitleBarText"/>
+             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:textColor="@color/TitleTextBar"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="@string/Friend_Title"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btnShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            style="@style/button"
+            android:background="@drawable/tofriend"
+            android:contentDescription="@string/contentDescription"
             android:onClick="share"
             android:text="@string/button_share" />
     </RelativeLayout>
@@ -59,5 +67,15 @@
         android:dividerHeight="1dp"
         android:listSelector="@drawable/friend_list">
     </ListView>
+    
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:indeterminate="true" 
+        android:visibility="invisible" />
 
 </RelativeLayout>

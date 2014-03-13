@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -77,7 +78,7 @@ public class ShareItem extends FragmentActivity {
 				if (customLat != 0) {
 					//address = util.getCompleteAddressString(location.latitude, location.longitude, this);
 					Marker customLocation = map.addMarker(new MarkerOptions()
-							.position(location).title(address));
+							.position(location));
 					customLocation.showInfoWindow();
 					util.moveMap(map, location, 16);
 					
@@ -116,7 +117,7 @@ public class ShareItem extends FragmentActivity {
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			util.ShowMessage(e.getMessage(), this);
+			util.ShowMessage(this,"OnCreate: " + e.getMessage());
 		}
 	}
 
@@ -130,7 +131,7 @@ public class ShareItem extends FragmentActivity {
 	    //respond to menu item selection
 		switch (item.getItemId()) {
 	    case R.id.mBookmark:
-	    eventBookmark();
+	    //eventBookmark(this);
 	    return true;
 	    default:
 	    return super.onOptionsItemSelected(item);
@@ -178,7 +179,7 @@ public class ShareItem extends FragmentActivity {
 		}
 	}
 	
-	public void eventBookmark() {
+	public void eventBookmark(View view) {
 		if (validate()) {
 			newItem = new Item();
 			String accountID = util.getPrefAccountID(this);
@@ -195,40 +196,33 @@ public class ShareItem extends FragmentActivity {
 			newItem.setAddress(txtAddress.getText().toString());
 			newItem.setLatLng(location.latitude, location.longitude);
 			
-			saveItem(newItem);
+			bookmarkItemTask t = new bookmarkItemTask(newItem);
+			t.execute();
 			
 			Intent intent = new Intent(getApplicationContext(),Home.class);
 			startActivity(intent);
 		}
 	}
 	
-	private String saveItem(Item itm) {
+	private String bookmarkItem(Item itm) {
 		try {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("action", "bookmark"));
+			params.add(new BasicNameValuePair("action", "bookmark-point"));
 			params.add(new BasicNameValuePair("os", util.OS));
-			params.add(new BasicNameValuePair("name", itm.getName()));
+			params.add(new BasicNameValuePair("accountid", String.valueOf(itm
+					.getAccountID())));
+			params.add(new BasicNameValuePair("itemid", String.valueOf(itm
+					.getItemID())));
+			params.add(new BasicNameValuePair("pointname", itm.getName()));
 			params.add(new BasicNameValuePair("address", itm.getAddress()));
 			params.add(new BasicNameValuePair("locx", String.valueOf(itm
-					.getLatLng())));
+					.getLattitude())));
 			params.add(new BasicNameValuePair("locy", String.valueOf(itm
 					.getLongitude())));
-			params.add(new BasicNameValuePair("owner", String.valueOf(itm
-					.getShareby())));
-
-			JSONObject jUser = util.getJSONfromURL(util.hostURL, "GET", params);
-
-			int errorCode = jUser.getInt("ErrorCode");
-			String msg = jUser.getString("Message");
-			JSONObject jItem = jUser.getJSONObject("Data");
-
-			// success : 0: success_no_msg or 1: success_msg
-
-			if (errorCode <= 1) {
-				ItemDetail item = new ItemDetail(jItem);
-				return item.getID();
-			}
-		} catch (JSONException e) {
+			JSONObject jUser = util.getJSONfromURL( params);
+			
+			
+		} catch (Exception e) {
 			// TODO: handle exception
 		}
 		return "0";
@@ -243,6 +237,35 @@ public class ShareItem extends FragmentActivity {
 		if(address.length()==0) address="no name";
 		EditText txtAddress = (EditText) findViewById(R.id.txtItemAddress);
 		txtAddress.setText(address);
+	}
+	
+	class bookmarkItemTask extends AsyncTask<String, Integer, Boolean> {
+		Item item;
+		public bookmarkItemTask(Item i) {
+			item=i;
+
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			try {
+				bookmarkItem(item);
+				//Thread.sleep(1000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
 	}
 
 }

@@ -8,6 +8,8 @@
         android:id="@+id/TitleHome"
         style="@style/TitleBar" >
 
+         
+         
         <ImageButton
             android:id="@+id/imgHome"
             android:layout_alignParentLeft="true"
@@ -19,21 +21,31 @@
             android:onClick="eventHome"
             android:contentDescription="@string/contentDescription"
             android:background="@drawable/home" />
-
-        <TextView
-            style="@style/TitleBarText"
-            android:layout_alignBaseline="@+id/btnToFriend"
-            android:text="@string/Share_Title" />
-
-        <Button
+         
+        <ImageButton
             android:id="@+id/btnToFriend"
-            style="@style/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:onClick="eventToFriend"
+            android:background="@drawable/tofriend"
+            android:contentDescription="@string/contentDescription"
             android:text="@string/toFriend" />
+
+        <TextView
+             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:textColor="@color/TitleTextBar"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            
+            android:text="@string/Share_Title" />
+
     </RelativeLayout>
 
     <EditText
@@ -42,6 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/TitleHome"
         android:hint="@string/ItemName"
+        android:maxLength="25"
         android:inputType="text" >
 
         <requestFocus />
@@ -57,6 +70,7 @@
         <EditText
             android:id="@+id/txtItemAddress"
             android:layout_width="0dip"
+            android:maxLength="80"
             android:layout_height="wrap_content"
             android:hint="@string/ItemAddress"
             android:layout_weight="1"
@@ -79,5 +93,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/Address" />
+
+    <ImageButton
+        android:id="@+id/btnBookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="3dp"
+        android:layout_alignTop="@+id/ItemMap"
+        android:contentDescription="@string/contentDescription"
+        android:onClick="eventBookmark"
+        android:src="@drawable/bookmark" />
 
 </RelativeLayout>

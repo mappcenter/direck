@@ -21,12 +21,12 @@ public class Account {
 			Id = json.getString("Id");
 	         Name = json.getString("Name"); 
 	         PhoneNumber = json.getString("PhoneNumber"); 
-	         CreatedDate = json.getString("CreateDate"); 
+	         CreatedDate = json.getString("CreatedDate"); 
 	         ModifiedDate = json.getString("ModifiedDate"); 
 	         Status = json.getString("Status");
 		} catch (JSONException e) {
 			// TODO: handle exception
-			util.ShowMessage(e.getMessage(), con);
+			util.ShowMessage(this,"Account_JSON: "+  e.getMessage());
 			
 		}
 		 

@@ -5,5 +5,5 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
-
+     <item android:id="@+id/mRefresh" android:title="@string/menu_update_friend"></item>
 </menu>

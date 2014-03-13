@@ -23,7 +23,9 @@
     <color name="TitleBar">#DADADA</color>
     <color name="TitleTextBar">#000000</color>
     <color name="backgroundColor">#FFFFFF</color>
+    <color name="green">#FF30F205</color>
    <color name="distanceTextColor">#000000</color>
+   <color name="splash">#46851d</color>
 
     
 

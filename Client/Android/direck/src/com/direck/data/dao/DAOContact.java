@@ -13,120 +13,160 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-
+import android.database.sqlite.SQLiteException;
 
 public class DAOContact {
 	// Database fields
-		private SQLiteDatabase database;
-		private dblite dbHelper;
-		private String[] allColumns = { dblite.COLUMN_ID,
-				dblite.COLUMN_AccountID, dblite.COLUMN_ContactName,
-				dblite.COLUMN_ContactNumber,
-				dblite.COLUMN_FriendID, dblite.COLUMN_ModifiedDate,
-				dblite.COLUMN_Status };
+	private SQLiteDatabase database;
+	private dblite dbHelper;
+	private String[] allColumns = { dblite.COLUMN_ID, dblite.COLUMN_AccountID,
+			dblite.COLUMN_ContactName, dblite.COLUMN_ContactNumber,
+			dblite.COLUMN_FriendID, dblite.COLUMN_ModifiedDate,
+			dblite.COLUMN_Status };
 
-		public DAOContact(Context context) {
-			dbHelper = new dblite(context);
+	public DAOContact(Context context) {
+		dbHelper = new dblite(context);
+	}
+
+	public void open() throws SQLException {
+		database = dbHelper.getWritableDatabase();
+	}
+
+	public void close() {
+		dbHelper.close();
+	}
+
+	public Contact createContact(String accountID, String contactName,
+			String contactNumber, String FriendID, String status) {
+		ContentValues values = new ContentValues();
+		values.put(dblite.COLUMN_AccountID, accountID);
+		values.put(dblite.COLUMN_ContactName, contactName);
+		values.put(dblite.COLUMN_ContactNumber, contactNumber);
+		values.put(dblite.COLUMN_FriendID, FriendID);
+		values.put(dblite.COLUMN_ModifiedDate, util.getDateTime());
+		values.put(dblite.COLUMN_Status, status);
+		try {
+			long insertId = database.insert(dblite.TABLE_CONTACT, null, values);
+			Cursor cursor = database
+					.query(dblite.TABLE_CONTACT, allColumns, dblite.COLUMN_ID
+							+ " = " + insertId, null, null, null, null);
+			cursor.moveToFirst();
+			Contact newContact = cursorToContact(cursor);
+			cursor.close();
+			return newContact;
+		} catch (Exception e) {
+			// TODO: handle exception
+			util.ShowMessage(this,"CreateContact: " + e.getMessage());
 		}
+		return null;
 
-		public void open() throws SQLException {
-			database = dbHelper.getWritableDatabase();
+	}
+
+	public void deleteContact(Contact contact) {
+		try {
+			String id = contact.getID();
+			System.out.println("contact with ID deleted: " + id);
+			database.delete(dblite.TABLE_CONTACT,
+					dblite.COLUMN_ID + " = " + id, null);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
+	}
 
-		public void close() {
-			dbHelper.close();
+	public void deleteAllContact() {
+		try {
+			database.delete(dblite.TABLE_CONTACT, null, null);
+		} catch (Exception e) {
+			util.ShowMessage(this, e.getMessage());
+			// TODO: handle exception
 		}
+	}
 
-		public Contact createContact(String accountID, String contactName,
-				String contactNumber, String FriendID, String status) {
-			ContentValues values = new ContentValues();
-			values.put(dblite.COLUMN_AccountID, accountID);
-			values.put(dblite.COLUMN_ContactName, contactName);
-			values.put(dblite.COLUMN_ContactNumber, contactNumber);
-			values.put(dblite.COLUMN_FriendID, FriendID);
-			values.put(dblite.COLUMN_ModifiedDate, util.getDateTime());
-			values.put(dblite.COLUMN_Status, status);
-			try {
-				long insertId = database.insert(dblite.TABLE_CONTACT, null,
-						values);
-				Cursor cursor = database.query(dblite.TABLE_CONTACT,
-						allColumns, dblite.COLUMN_ID + " = " + insertId,
-						null, null, null, null);
-				cursor.moveToFirst();
-				Contact newContact = cursorToContact(cursor);
-				cursor.close();
-				return newContact;
-			} catch (Exception e) {
-				// TODO: handle exception
+	public List<Contact> getAllContacts() {
+		List<Contact> contacts = new ArrayList<Contact>();
+		try {
+			Cursor cursor = database.query(dblite.TABLE_CONTACT, allColumns,
+					null, null, null, null, null);
+
+			cursor.moveToFirst();
+			while (!cursor.isAfterLast()) {
+				Contact obj = cursorToContact(cursor);
+				contacts.add(obj);
+				cursor.moveToNext();
 			}
-			return null;
+			// make sure to close the cursor
+			cursor.close();
 
-		}
-
-		public void deleteContact(Contact contact) {
-			try {
-				String id = contact.getID();
-				System.out.println("contact with ID deleted: " + id);
-				database.delete(dblite.TABLE_CONTACT,
-						dblite.COLUMN_ID + " = " + id, null);
-			} catch (Exception e) {
-				// TODO: handle exception
+		} catch (SQLiteException e) {
+			// TODO: handle exception
+			util.ShowMessage(this,e.getMessage());
+		} 
+		return contacts;
+	}
+	
+	public List<Contact> getAllContactsWithoutFriendID() {
+		List<Contact> contacts = new ArrayList<Contact>();
+		try {
+			Cursor cursor = database.query(dblite.TABLE_CONTACT, allColumns,
+					"FriendID is null or FriendID=? ", new String[]{""}, null, null, null);
+	
+			cursor.moveToFirst();
+			while (!cursor.isAfterLast()) {
+				Contact obj = cursorToContact(cursor);
+				contacts.add(obj);
+				cursor.moveToNext();
 			}
+			// make sure to close the cursor
+			cursor.close();
+
+		} catch (SQLiteException e) {
+			// TODO: handle exception
+			util.ShowMessage(this,e.getMessage());
 		}
-		public void deleteAllContact() {
-			try {
-				database.delete(dblite.TABLE_CONTACT,
-						null, null);
-			} catch (Exception e) {
-				// TODO: handle exception
+		return contacts;
+	}
+
+	public ArrayList<Friend> getFriendList() {
+		ArrayList<Friend> friends = new ArrayList<Friend>();
+		try {
+			Cursor cursor = database.query(dblite.TABLE_CONTACT, allColumns, 
+					"FriendID is not null and FriendID!=? ", new String[]{"0"}, null, null, null);
+
+			cursor.moveToFirst();
+			while (!cursor.isAfterLast()) {
+				Friend obj = cursorToFriend(cursor);
+				friends.add(obj);
+				cursor.moveToNext();
 			}
+			// make sure to close the cursor
+			cursor.close();
+	
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
-		
-		public List<Contact> getAllContacts() {
-		    List<Contact> contacts = new ArrayList<Contact>();
+				return friends;
+	}
 
-		    Cursor cursor = database.query(dblite.TABLE_CONTACT,
-		        allColumns, null, null, null, null, null);
-
-		    cursor.moveToFirst();
-		    while (!cursor.isAfterLast()) {
-		      Contact obj = cursorToContact(cursor);
-		      contacts.add(obj);
-		      cursor.moveToNext();
-		    }
-		    // make sure to close the cursor
-		    cursor.close();
-		    return contacts;
-		  }
-		public ArrayList<Friend> getFriendList(){
-			ArrayList<Friend> friends = new ArrayList<Friend>();
-			Cursor cursor = database.query(dblite.TABLE_CONTACT,
-			        allColumns, null, null, null, null, null);
-
-			    cursor.moveToFirst();
-			    while (!cursor.isAfterLast()) {
-			      Friend obj = cursorToFriend(cursor);
-			      friends.add(obj);
-			      cursor.moveToNext();
-			    }
-			    // make sure to close the cursor
-			    cursor.close();
-			    return friends;
-		}
-
-		private Contact cursorToContact(Cursor cursor) {
-			Contact contact = new Contact();
+	private Contact cursorToContact(Cursor cursor) {
+		Contact contact = new Contact();
+		try {
 			contact.setID(cursor.getString(0));
 			contact.setAccountID(cursor.getString(1));
 			contact.setContactName(cursor.getString(2));
 			contact.setContactNumber(cursor.getString(3));
 			contact.setFriendID(cursor.getString(4));
 			contact.setModifiedDate(cursor.getString(5));
-			contact.setStatus(cursor.getString(6));
-			return contact;
+			contact.setStatus(cursor.getString(6));	
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
-		private Friend cursorToFriend(Cursor cursor) {
-			Friend friend = new Friend(cursor.getString(2),cursor.getString(3),cursor.getInt(4),false);
-			return friend;
-		}
+		
+		return contact;
+	}
+
+	private Friend cursorToFriend(Cursor cursor) {
+		Friend friend = new Friend(cursor.getString(2), cursor.getString(3),
+				cursor.getInt(4), false);
+		return friend;
+	}
 }

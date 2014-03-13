@@ -28,8 +28,9 @@ public class FriendArrayAdapter extends ArrayAdapter<Friend> implements
 
 		super(context, textViewResourceId, R.layout.list_item, contactList);
 
-		this.friendlist = new ArrayList<Friend>();
-		this.friendlist.addAll(contactList);
+		//this.friendlist = new ArrayList<Friend>();
+		//this.friendlist.addAll(contactList);
+		this.friendlist = contactList;
 
 	}
 

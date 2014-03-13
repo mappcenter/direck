@@ -10,18 +10,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Item implements Parcelable {
+	int Id;
 	int accountID;
 	int ItemID=0;
 	int FriendID;
 	int type;
 	boolean ViewStatus;
 	// more info
-	String Name;
-	String Address;
+	String Name="";
+	String Address="";
 	double lattitude;
 	double longitude;
-	String shareby;
-	String CreateDate;
+	String shareby="";
+	String CreateDate="";
+	
 
 	public Item() {
 
@@ -33,10 +35,11 @@ public class Item implements Parcelable {
 		this.type = type;
 	}
 
-	public Item(int accountID, int itemID, int friendID, int type,
+	public Item(int ID,int accountID, int itemID, int friendID, int type,
 			boolean viewStatus, String name, String address, double lattitude,
 			double longitude, String shareby, String createDate) {
 		super();
+		this.Id = ID;
 		this.accountID = accountID;
 		ItemID = itemID;
 		FriendID = friendID;
@@ -51,16 +54,18 @@ public class Item implements Parcelable {
 	}
 	public Item(JSONObject json){
 		try {
-			
-			this.accountID =Integer.parseInt(json.getString("AccountID"));
-			ItemID = Integer.parseInt(json.getString("PointID"));
-			FriendID = Integer.parseInt(json.getString("FriendID"));
-			this.type = Integer.parseInt(json.getString("Type"));
-			ViewStatus = Boolean.parseBoolean(json.getString("ViewStatus"));
+			this.Id = Integer.parseInt(util.isNull(json.getString("Id"),"0"));
+			this.accountID =Integer.parseInt(util.isNull(json.getString("AccountID"),"0"));
+			ItemID = Integer.parseInt(util.isNull(json.getString("PointID"),"0"));
+			FriendID = Integer.parseInt(util.isNull(json.getString("FriendID"),"0"));
+			this.type = Integer.parseInt(util.isNull(json.getString("Type"),"0"));
+			String viewstatus = json.getString("ViewStatus");
+			if (viewstatus.equals("1")) ViewStatus = true;
+			else ViewStatus = false;
 			Name = json.getString("PointName");
 			Address = json.getString("PointAddress");
-			this.lattitude = Integer.parseInt(json.getString("PointLocX"));
-			this.longitude = Integer.parseInt(json.getString("PointLocY"));
+			this.lattitude = Double.parseDouble(util.isNull(json.getString("PointLocX"),"0"));
+			this.longitude = Double.parseDouble(util.isNull(json.getString("PointLocY"),"0"));
 			
 			this.CreateDate = json.getString("PointCreatedDate");
 			if ((this.type == util.ShareType) ||(this.type == util.BookmarkType)){
@@ -72,6 +77,16 @@ public class Item implements Parcelable {
 			// TODO: handle exception
 			
 		}
+	}
+	
+	
+
+	public int getId() {
+		return Id;
+	}
+
+	public void setId(int id) {
+		Id = id;
 	}
 
 	public String getCreateDate() {
@@ -187,6 +202,7 @@ public class Item implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		// TODO Auto-generated method stub
+		dest.writeInt(Id);
 		dest.writeInt(accountID);
 		dest.writeInt(ItemID);
 		dest.writeInt(FriendID);
@@ -206,6 +222,7 @@ public class Item implements Parcelable {
 	}
 
 	Item(Parcel in) {
+		this.Id = in.readInt();
 		this.accountID = in.readInt();
 		this.ItemID = in.readInt();
 		this.FriendID = in.readInt();

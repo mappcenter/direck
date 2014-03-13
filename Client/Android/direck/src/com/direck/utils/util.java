@@ -4,9 +4,12 @@ package com.direck.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -36,12 +39,16 @@ public class util {
 	public static int ShareType = 0;
 	public static int BeSharedType = 1;
 	public static int BookmarkType = 2;
-	public static boolean debug=true;
+	public static boolean debug=false;
+	public static boolean usedPOSTMethod=false;
 	public static int SUCCESS_NO_MSG = 0;
 	public static int SUCCESS_MSG = 1;
 	public static int ERROR_NO_MSG = 2;
 	public static int ERROR_MSG = 3;
-	public static String hostURL = "http://vnpon.com/Direck/";
+	public static String GCMToken= "GCMTokenKey";
+	public static String MD5= "key@Direk";
+	public static String hostURL = "http://192.168.0.122:89/Direck/";
+	//public static String hostURL = "http://vnpon.com/Direck/";
 	public static String OS="android";
 	 
 	
@@ -52,12 +59,17 @@ public class util {
         return dateFormat.format(date);
     }
 	public static void moveMap(GoogleMap m,LatLng loc,int zoom){
-		// Move the camera instantly tolocation with a zoom of 17.
-		m.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,
-				zoom));
-		// Zoom in, animating the camera.
-		m.animateCamera(CameraUpdateFactory.zoomTo(zoom-2), 2000,
-				null);
+		try {
+			// Move the camera instantly tolocation with a zoom of 17.
+			m.moveCamera(CameraUpdateFactory.newLatLngZoom(loc,
+					zoom));
+			// Zoom in, animating the camera.
+			m.animateCamera(CameraUpdateFactory.zoomTo(zoom-2), 2000,
+					null);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 	}
 	public static String getCompleteAddressString(double LATITUDE, double LONGITUDE,Context con) {
         String strAdd = "";
@@ -76,18 +88,23 @@ public class util {
                 //Log.w("My Current loction address", "No Address returned!");
             }
         } catch (Exception e) {
-        	util.ShowMessage(e.getMessage(), con);
+        	util.ShowMessage("Util:","getCompleteAddressString: " + e.getMessage());
             //Log.w("My Current loction address", "Canont get Address!");
             //Toast.makeText(con, e.getMessage(), Toast.LENGTH_LONG).show();
         }
         //Toast.makeText(con, strAdd, Toast.LENGTH_LONG).show();
         return strAdd;
     }
-	public static void ShowMessage(String text,Context con){
+	public static void ShowToastMessage(String text,Context con){
+			Toast.makeText(con, text, Toast.LENGTH_LONG).show();
+			//Log.d(con.getClass().getName(), text);
+	}
+	public static void ShowMessage(Object obj,String text){
 		//if (debug){
 			//Toast.makeText(con, text, Toast.LENGTH_LONG).show();
 			//Log.d(con.getClass().getName(), text);
 		//}
+		System.out.println("Object:" +obj.toString() + ": " + text);
 	}
 	public static String getStringPref(Context con,String key,String defaultValue){
 		String val = defaultValue;
@@ -113,6 +130,9 @@ public class util {
 	}
 	public static String getPrefAccountID(Context con){
 		return getStringPref(con, con.getString(R.string.uid), "0");
+	}
+	public static String getPrefGCMToken(Context con){
+		return getStringPref(con, util.GCMToken, "0");
 	}
 	 public static void post(String endpoint, Map<String, String> params)
 	            throws IOException {   	
@@ -162,9 +182,18 @@ public class util {
 	            }
 	        }
 	      }
-	 public static JSONObject  getJSONfromURL(String url, String method,List<NameValuePair> params){
+	 public static JSONObject  getJSONfromURL(List<NameValuePair> params){
 		 JSONParser jsonParser = new JSONParser();
-		 JSONObject json = jsonParser.makeHttpRequest(url,method, params);
+		 JSONObject json = new JSONObject();
+		 String method="";
+		 if (usedPOSTMethod) method="POST"; 
+		 	else method="GET";
+		 String url = util.hostURL;
+		 try {
+			 json = jsonParser.makeHttpRequest(url,method, params);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		 return json;
 	 }
 	 public static String returnCode(int errorCode){
@@ -180,4 +209,46 @@ public class util {
 		 }
 		 return message;
 	 }
+	 public static String isNull(String value, String defaultValue){
+		 if (value == null) return defaultValue;
+		 if (value.equals("null")) return defaultValue;
+		 return value;
+	 }
+	 public static void checkNotNull(Object reference, String name) {
+	        if (reference == null) {
+	            //throw new NullPointerException(
+	              //      getString(R.string.error_config, name));
+	        }
+	    }
+	 
+	 public static String getMD5(String input) {
+		    String result = input;
+		    try {
+		    	  if(input != null) {
+				        MessageDigest md = MessageDigest.getInstance("MD5"); //or "SHA-1"
+				        md.update(input.getBytes());
+				        BigInteger hash = new BigInteger(1, md.digest());
+				        result = hash.toString(16);
+				        while(result.length() < 32) { //40 for SHA-1
+				            result = "0" + result;
+				        }
+				    }
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		  
+		    return result;
+		}
+	 public static double distFrom(double lat1, double lng1, double lat2, double lng2) { 
+	      double earthRadius = 3958.75; 
+	      double dLat = Math.toRadians(lat2-lat1); 
+	      double dLng = Math.toRadians(lng2-lng1); 
+	      double a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+	               Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * 
+	               Math.sin(dLng/2) * Math.sin(dLng/2); 
+	      double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+	      double dist = earthRadius * c; 
+
+	      return dist; 
+	    } 
 }

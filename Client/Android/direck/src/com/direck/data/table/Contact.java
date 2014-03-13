@@ -23,7 +23,7 @@ public class Contact {
 	         AccountID = json.getString("AccountID"); 
 	         ContactName = json.getString("ContactName"); 
 	         ContactNumber = json.getString("ContactNumber"); 
-	         FriendID = json.getString("FriendID "); 
+	         FriendID = json.getString("FriendID"); 
 	         ModifiedDate = json.getString("ModifiedDate");
 	         Status = json.getString("Status");
 		} catch (JSONException e) {
@@ -58,6 +58,8 @@ public class Contact {
 	}
 
 	public String getContactNumber() {
+		ContactNumber.replace("-", "");
+		ContactNumber.replace(" ", "");
 		return ContactNumber;
 	}
 
