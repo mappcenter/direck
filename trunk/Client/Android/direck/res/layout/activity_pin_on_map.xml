@@ -10,17 +10,26 @@
         style="@style/TitleBar" >
 
         <TextView
-            android:layout_alignBaseline="@+id/btnToFriend"
+            
             android:text="@string/Map"
-            style="@style/TitleBarText"/>
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:textColor="@color/TitleTextBar"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btnToFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            style="@style/button"
+             android:background="@drawable/done"
+            android:contentDescription="@string/contentDescription"
             android:onClick="DonePin"
             android:text="@string/done" />
     </RelativeLayout>

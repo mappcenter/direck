@@ -78,7 +78,8 @@ public class PullToRefreshListView extends ListView{
     private State                   state;
     private LinearLayout            headerContainer;
     private RelativeLayout          header;
-    private RotateAnimation         flipAnimation;
+
+	private RotateAnimation         flipAnimation;
     private RotateAnimation         reverseFlipAnimation;
     private ImageView               image;
     private ProgressBar             spinner;

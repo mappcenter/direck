@@ -24,17 +24,26 @@
             android:background="@drawable/home" />
 
         <TextView
-            style="@style/TitleBarText"
-            android:layout_alignBaseline="@+id/btnShare"
+           
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:textColor="@color/TitleTextBar"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:text="@string/Details_Title" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            style="@style/button"
+             android:background="@drawable/tofriend"
+            android:contentDescription="@string/contentDescription"
             android:onClick="share"
             android:text="@string/button_share" />
     </RelativeLayout>
@@ -75,13 +84,19 @@
             android:textColor="@color/distanceTextColor"
             android:textSize="20sp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnDirection"
-            android:layout_alignParentRight="true"
+             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+             android:background="@drawable/gmap"
+            android:contentDescription="@string/contentDescription"
             android:onClick="showDirection"
             android:text="@string/button_direction" 
-            style="@style/button"/>
+            />
     </RelativeLayout>
 
 </LinearLayout>

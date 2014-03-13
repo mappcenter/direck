@@ -1,45 +1,46 @@
 package com.direck.activities;
 
+
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.direck.R;
 import com.direck.activities.Home;
-import com.direck.data.dao.DAOContact;
-import com.direck.data.table.Contact;
 import com.direck.models.Account;
-import com.direck.models.Friend;
+import com.direck.sync.RegisterGCM;
 import com.direck.sync.sync;
 import com.direck.utils.ConnectionDetector;
-import com.direck.utils.JSONParser;
 import com.direck.utils.util;
+import com.google.android.gcm.GCMRegistrar;
 
-import android.R.string;
-import android.media.audiofx.AcousticEchoCanceler;
+
+
+
+
+
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+
 
 public class Register extends Activity {
 	RelativeLayout progressLayout;
@@ -47,34 +48,34 @@ public class Register extends Activity {
 	String phoneNumber;
 	String displayName;
 	
+	RegisterGCM GCM;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_register);
-
-		if (!util.debug) {
-			// if isFirstRegister = true ( 1) then show register form else show
-			// Home screen
-			String isFirstRegister = util.getStringPref(this, getString(R.string.isFirstRegister), "1");
-					
-			if (isFirstRegister.equals("1")){
-				setContentView(R.layout.activity_register);
-				progressLayout = (RelativeLayout) findViewById(R.id.progressbar_view);
-				progressLayout.setVisibility(View.INVISIBLE);
-				loadUserPhoneNumber();
-			} else {
-				// home screen
-				Intent intent = new Intent(this, Home.class);
-				startActivity(intent);
-			}
-		}else {
-			progressLayout = (RelativeLayout) findViewById(R.id.progressbar_view);
-			progressLayout.setVisibility(View.INVISIBLE);
-			loadUserPhoneNumber();
-		}
-
+		setContentView(R.layout.activity_register);		
+		progressLayout = (RelativeLayout) findViewById(R.id.progressbar_view);
+		progressLayout.setVisibility(View.INVISIBLE);
+		loadUserPhoneNumber();
 	}
+	
+	  @Override
+	    protected void onDestroy() {
+		  try {
+			  if (GCM !=null){
+			        if (GCM.getmRegisterTask() != null) {
+			            GCM.getmRegisterTask().cancel(true);
+			        }
+			        unregisterReceiver(GCM.getmHandleMessageReceiver());
+			        GCMRegistrar.onDestroy(this);
+				  }
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.i("",e.getMessage());
+		}
+		  
+	        super.onDestroy();
+	    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,9 +105,15 @@ public class Register extends Activity {
 			ConnectionDetector internet = new ConnectionDetector(this);
 			
 			if (!internet.isConnectingToInternet()) { 
-				util.ShowMessage("no itnernet connection", this);
+				util.ShowToastMessage("No internet connection!", this);
 				return 0;
 			}
+            
+			ImageButton btn = (ImageButton)findViewById(R.id.btnSend);
+			btn.requestFocus();
+			InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+		    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+		    //imm.hideSoftInputFromInputMethod(btn.getWindowToken(), 0);
 			// bSuccess=register();
 			if (validate()) {
 				EditText txtPhone = (EditText) findViewById(R.id.phone_no);
@@ -114,23 +121,50 @@ public class Register extends Activity {
 				phoneNumber = txtPhone.getText().toString();
 				displayName = txtName.getText().toString();
 				// Synchronize
-			    RegisterTask t =	new RegisterTask(this);
-			    t.execute();
+				
+				 AlertDialog d=  new AlertDialog.Builder(this)
+	                .setTitle(R.string.NumberDialog_Title)
+	                .setMessage(getString(R.string.NumberDialog_Message,displayName, phoneNumber))
+	                .setPositiveButton(R.string.NumberDialog_Yes, new DialogInterface.OnClickListener() {
+	                    public void onClick(DialogInterface dialog, int whichButton) {
+
+	                        /* User clicked OK so do some stuff */
+	                    	RegisterTask t =	new RegisterTask(getApplicationContext());
+	        			    t.execute();
+	                    }
+	                })
+	                .setNegativeButton(R.string.NumberDialog_No, new DialogInterface.OnClickListener() {
+	                    public void onClick(DialogInterface dialog, int whichButton) {
+
+	                        /* User clicked Cancel so do some stuff */
+	                    	EditText txtPhone = (EditText) findViewById(R.id.phone_no);
+	                    	txtPhone.requestFocus();
+	                    }
+	                })
+	                .create();
+				 
+				 d.show();
+				
+				
+				
+				//AlertDialog myDialog = MyDialog("Confirm", "Is this your phone number: " + phoneNumber  + " ?", this);
+              //  myDialog.show();
+			    //RegisterTask t =	new RegisterTask(this);
+			    //t.execute();
 
 				// if create transaction successfully then mark isFirstRegister
 				// = 0
-				if (!util.debug) {
-					util.setStringPref(this, getString(R.string.isFirstRegister), "0");
-				}
+				
 
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			util.ShowMessage(e.getMessage(), this);
+			util.ShowMessage(this,"startDireck: " + e.getMessage());
 		}
 		return 1;
-
 	}
+	
+
 
 	private String createAccount() {
 		String accID = "0";
@@ -144,7 +178,7 @@ public class Register extends Activity {
 			params.add(new BasicNameValuePair("phonenumber", phoneNumber));
 			params.add(new BasicNameValuePair("os", util.OS));
 
-			JSONObject jUser = util.getJSONfromURL(serverUrl, "GET", params);
+			JSONObject jUser = util.getJSONfromURL(params);
 			//String json="{\"ErrorCode\":1,\"Message\":\"Create Successful\",\"Data\":{\"Id\":\"10\",\"Name\":\"Liem2\",\"PhoneNumber\":\"123456789\",\"CreatedDate\":\"1386563805\",\"ModifiedDate\":\"0\",\"Status\":\"1\"}}";
 			//JSONObject jUser = new JSONObject(json);  
 
@@ -170,35 +204,7 @@ public class Register extends Activity {
 		return accID;
 	}
 
-	private JSONArray uploadContact() {
-		JSONArray jArr = new JSONArray();
-		try {
-			DAOContact dao = new DAOContact(this);
-			List<Contact> contactLst = dao.getAllContacts();
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("action", "upload-contact"));
-			params.add(new BasicNameValuePair("accountid", AccountID));
-			params.add(new BasicNameValuePair("os", util.OS));
-			for (int i = 0; i < contactLst.size(); i++) {
-				Contact contact = contactLst.get(i);
-				params.add(new BasicNameValuePair("contact", contact
-						.getContactName() + "::" + contact.getContactNumber()));
-			}
-			JSONObject jContact = util.getJSONfromURL(util.hostURL, "GET",
-					params);
-			int errorCode = jContact.getInt("ErrorCode");
-			String msg = jContact.getString("Message");
-			if (errorCode <= 1) {
-				jArr = jContact.getJSONArray("Data");
-			}
-		} catch (JSONException je) {
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return jArr;
-	}
-
+	
 	public boolean register() {
 		try {
 			// create account
@@ -206,34 +212,28 @@ public class Register extends Activity {
 			// create successfull do next action
 			
 			if (!AccountID.equals("0")) {
-				// sync contact from mobile to Local db
-				sync.syncContactToLocalDB(getApplicationContext());
-				// upload contact
-				JSONArray arrayContact = uploadContact();
-				// sync contact from local mobile with server db
-				DAOContact dao = new DAOContact(this);
-				dao.deleteAllContact();
-				// create friend list
-				for (int i = 0; i < arrayContact.length(); i++) {
-					JSONObject c = arrayContact.getJSONObject(i);
-					Contact con = new Contact(c);
-					dao.createContact(con.getAccountID(), con.getContactName(),
-							con.getContactNumber(), con.getFriendID(),
-							con.getStatus());
-				}
+				GCM = new RegisterGCM();
+				GCM.registerGCM(getApplicationContext(), AccountID);
+				
+				//registerGCM(AccountID);
+				sync.syncContactServer(getApplicationContext(),AccountID);
+				//register ok
+				util.setStringPref(this, getString(R.string.isFirstRegister), "0");
 			}
 			
 		} catch (Exception e) {
 			// TODO: handle exception
-			util.ShowMessage(e.getMessage(), this);
+			util.ShowMessage(this, "register: " + e.getMessage());
 		}
 		// Do something in response to button
 
 		return true;
 	}
+	 
 
 	public void loadUserPhoneNumber() {
 		try {
+			 
 			TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 			String number = tm.getLine1Number();
 			if (number == null)
@@ -248,14 +248,14 @@ public class Register extends Activity {
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			util.ShowMessage(e.getMessage(), this);
+			util.ShowMessage(this, "loadPhoneNumber: " + e.getMessage());
 		}
 	}
 
 	class RegisterTask extends AsyncTask<String, Integer, Boolean> {
-Context context;
+		Context context;
 		public RegisterTask(Context con) {
-context = con;
+			context = con;
 		}
 
 		@Override
@@ -270,30 +270,31 @@ context = con;
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			
-			
 			// listView.setVisibility(View.VISIBLE);
 			// adapter.notifyDataSetChanged();
 			
 			super.onPostExecute(result);
-			progressLayout.setVisibility(View.INVISIBLE);
+			//progressLayout.setVisibility(View.INVISIBLE);
+			finish();
 			Intent intent = new Intent(context, Home.class);
 			startActivity(intent);
-			finish();
+			
 		}
 
 		@Override
 		protected Boolean doInBackground(String... params) {
-
-			
 			try {
 				register();
-				Thread.sleep(7000);
+				Thread.sleep(5000);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return null;
 		}
 	}
+	
+	
+
+   
 
 }

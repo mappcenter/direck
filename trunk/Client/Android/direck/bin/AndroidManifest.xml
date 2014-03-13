@@ -23,19 +23,29 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" /> 
-    
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!--
          The following two permissions are not required to use
-	     Google Maps Android API v2, but are recommended.
+	     Google Maps Android API v2, but are recommended.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
-   
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-<uses-permission android:name="android.permission.VIBRATE" />
+<!--  GCM permission  -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <permission
+        android:name="com.direck.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.direck.permission.C2D_MESSAGE" />
+
+    <!-- This app has permission to register and receive data message. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
     <uses-feature
         android:name="android.hardware.location"
         android:required="true" />
@@ -44,19 +54,15 @@
         android:required="false" />
 
     <application
+        android:name="com.direck.Direck"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" 
-        android:name=".Direck">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="com.direck.activities.Register"
-            android:label="@string/title_activity_register" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:label="@string/title_activity_register" 
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
 
         <meta-data
@@ -68,8 +74,8 @@
 
         <activity
             android:name="com.direck.activities.Home"
-            android:label="@string/title_activity_home" 
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:label="@string/title_activity_home"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name="com.direck.activities.ItemDetails"
@@ -78,8 +84,8 @@
         </activity>
         <activity
             android:name="com.direck.activities.FriendList"
-            android:label="@string/title_activity_friend_list" 
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:label="@string/title_activity_friend_list"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name="com.direck.activities.ShareItem"
@@ -88,22 +94,58 @@
         </activity>
         <activity
             android:name="com.direck.activities.PinOnMap"
-            android:label="@string/title_activity_pin_on_map" 
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:label="@string/title_activity_pin_on_map"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name="com.direck.activities.Direction"
-            android:label="@string/title_activity_direction" 
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:label="@string/title_activity_direction"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
-        
-        <service android:name="com.parse.PushService" />
-<receiver android:name="com.parse.ParseBroadcastReceiver">
-  <intent-filter>
-    <action android:name="android.intent.action.BOOT_COMPLETED" />
-    <action android:name="android.intent.action.USER_PRESENT" />
-  </intent-filter>
-</receiver>
+
+        <!--
+          BroadcastReceiver that will receive intents from GCM
+          services and handle them to the custom IntentService.
+
+          The com.google.android.c2dm.permission.SEND permission is necessary
+          so only GCM services can send data messages for the app.
+        -->
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+
+                <!-- Receives the actual messages. -->
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <!-- Receives the registration id. -->
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.direck" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          Application-specific subclass of GCMBaseIntentService that will
+          handle received messages.
+
+          By default, it must be named .GCMIntentService, unless the
+          application uses a custom BroadcastReceiver that redefines its name.
+        -->
+        <service android:name="com.direck.GCMIntentService" />
+
+        <activity
+            android:name="com.direck.activities.Splash"
+            android:label="@string/title_activity_splash" 
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.google.android.gms.ads.AdActivity"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+    
     </application>
 
 </manifest>

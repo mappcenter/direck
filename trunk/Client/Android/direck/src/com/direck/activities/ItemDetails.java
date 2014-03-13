@@ -1,5 +1,12 @@
 package com.direck.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
 import com.direck.R;
 import com.direck.models.Item;
 import com.direck.utils.util;
@@ -15,14 +22,18 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ItemDetails extends FragmentActivity {
 
@@ -39,7 +50,10 @@ Item selectedItem;
 		Intent in = getIntent();
 		if (in !=null){
 			selectedItem = in.getParcelableExtra("selectedItem");
-			if (selectedItem==null) selectedItem= new Item(); 
+			if (selectedItem==null) {
+				selectedItem= new Item(); 
+				selectedItem.setId(0);
+			}
 		}
 
 		// Check Google Play Service Available
@@ -67,15 +81,18 @@ Item selectedItem;
 		    if (l!=null){
 		    	double lng=l.getLongitude();
 		        double lat=l.getLatitude();
+		        
+		        //double dist=0;
+		        //dist = util.distFrom(lat, lng, selectedItem.getLattitude(), selectedItem.getLongitude());
 		        float[] rs={0};
 		        Location.distanceBetween(lat, lng, selectedItem.getLattitude(), selectedItem.getLongitude(), rs);
 		        if (rs!=null){
-		        	txtDistance.setText(rs[0]/1000 + "(km)");
+		        	txtDistance.setText(String.format("%.2f", rs[0]/1000) + "(km)");
 		        }
 		    }
 		    
 		} catch (Exception e) {
-			util.ShowMessage(e.getMessage(), this);
+			util.ShowMessage(this,e.getMessage());
 		}
 		
 		/*
@@ -87,6 +104,9 @@ Item selectedItem;
 		*/
 
 	}
+	
+	
+	
 	public void share(View view){
 		Intent intent =new Intent(this, FriendList.class);
 		intent.putExtra("typeShare", "existed");
@@ -110,7 +130,7 @@ Item selectedItem;
 				startActivity(intent);
 		} catch (Exception e) {
 			// TODO: handle exception
-			util.ShowMessage(e.getMessage(), this);
+			util.ShowMessage(this,"showDirection: " + e.getMessage());
 		}
 	}
 
@@ -121,5 +141,7 @@ Item selectedItem;
 		getMenuInflater().inflate(R.menu.item_details, menu);
 		return true;
 	}
+	
+	
 
 }
