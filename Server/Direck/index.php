@@ -14,9 +14,9 @@ define("ANDROID", "android");
 #######################################
 # GET Params
 #######################################
-$os = isset($_GET['os'])?$_GET['os']:'';
-$token = isset($_GET['token'])?$_GET['token']:'';
-$time = isset($_GET['time'])?$_GET['time']:'';
+$os = isset($_POST['os'])?$_POST['os']:'';
+$token = isset($_POST['token'])?$_POST['token']:'';
+$time = isset($_POST['time'])?$_POST['time']:'';
 #######################################
 # OUT PUT
 #######################################
