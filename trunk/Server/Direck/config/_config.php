@@ -6,7 +6,7 @@ $config['db_pass']	= 'E7k6T9nt';
 
 define("CHECK_TOKEN", true);
 define("MD5_KEY", "key@Direk");
-define("GOOGLE_API_KEY", "AIzaSyB5NdHtABJlabqtjzpUP1PeIuGT7rWuIQY"); // Place your Google API Key
+define("GOOGLE_API_KEY", "AIzaSyDXbgQ70sWdR4XP8XxWGQhRsPa3wpxBujY"); // Place your Google API Key
 $tb_prefix		= 'direck_';
 
 include('_dbconnect.php');
