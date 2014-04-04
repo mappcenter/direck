@@ -25,9 +25,9 @@ function fCheckToken($iFunction, $iParam, $iTime, $iToken){
 	$currentTime = time();
 	//echo $currentTime."::".(round($iTime/1000) + constant("MD5_TIME_EXPIRED"))."<br>";
 	//echo $currentTime."::".($iTime/1000)."<br>";
-	$iTime = round($iTime/1000) + constant("MD5_TIME_EXPIRED");
-	echo $currentTime."::".$iTime."<br>";
-	if($currentTime > $iTime) {
+	$checkTime = round($iTime/1000) + constant("MD5_TIME_EXPIRED");
+	//echo $currentTime."::".$checkTime."<br>";
+	if($currentTime > $checkTime) {
 		return false;
 	}
 	$ServerToken = strtoupper(md5($iFunction.constant("MD5_KEY").$iTime));
