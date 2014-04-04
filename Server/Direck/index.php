@@ -14,19 +14,20 @@ define("ANDROID", "android");
 #######################################
 # GET Params
 #######################################
-$os = isset($_POST['os'])?$_POST['os']:'';
-$token = isset($_POST['token'])?$_POST['token']:'';
-$time = isset($_POST['time'])?$_POST['time']:'';
+$os = fGetFormData('os');
+$token = fGetFormData('token');
+$time = fGetFormData('time');
+//echo $os."::".$iTime."::".$token."<br>";
 #######################################
 # OUT PUT
 #######################################
 if ($os == IOS) {
 	include("service/ios.php");
-	$result = getaction();
+	$result = getAction();
 }else if ($os == ANDROID)
 {
 	include("service/android.php");
-	$result = getaction();
+	$result = getAction();
 }
 
 if (isset($result))
