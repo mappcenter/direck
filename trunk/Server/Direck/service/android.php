@@ -356,7 +356,7 @@ function fGetNotification(){
     // return value
     return Array("ErrorCode"=>1,"Message"=>"Create Successful", "Data"=>"");
 }
-function fAPPChecking() {
+function fGetAppInfo() {
     $AppInfo = new AppDA;
 	$AppInfo->getAPPInfo();
 	return Array("ErrorCode"=>0,"Message"=>"Get Successful", "Data"=>$AppInfo);
@@ -380,7 +380,7 @@ function getaction(){
 		case 'bookmark-point':    return fBookmarkPoint();
 		case 'update-ViewStatus':    return fUpdateViewStatus();
         case 'get-notification':    return fGetNotification();
-		case 'AppChecking': return fAPPChecking();
+		case 'get-AppInfo': return fGetAppInfo();
 		default:		return getDefault();
 	}
 }
