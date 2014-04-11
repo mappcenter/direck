@@ -25,6 +25,12 @@ class AccountDA {
 		$mysql->query("DELETE FROM `".$tb_prefix."account` WHERE `ID` = '".$inputId."'");
 		return true;
 	}
+	
+	public function inActiveAccount($inputId){
+		global $mysql, $tb_prefix;
+		$mysql->query("update `".$tb_prefix."account` set `status`=0 WHERE `ID` = '".$inputId."'");
+		return true;
+	}
 
 	public function updateTokenkey($iAccountId, $iTokenKey){
 		global $mysql, $tb_prefix;
@@ -36,7 +42,7 @@ class AccountDA {
     	global $mysql, $tb_prefix;
 		$data = 0;
 		$order_sql = "ORDER BY ID ASC";
-		$where_sql = "WHERE `PhoneNumber` = '".$InputPhoneNumber."'";
+		$where_sql = "WHERE `PhoneNumber` = '".$InputPhoneNumber."' and `status`=1";
 
 		$query = $mysql->query("SELECT Count(ID) AS Total FROM `".$tb_prefix."account` $where_sql $order_sql ;");
 		while ($rs = $mysql->fetch_array($query)) {
