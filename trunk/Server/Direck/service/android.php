@@ -64,6 +64,7 @@ function fCreateAccount(){
 			return Array("ErrorCode"=>3,"Message"=>"Create Account Fail","Data"=>"");
 		}
     }else {
+		
 		return Array("ErrorCode"=>2,"Message"=>"Existed phone number","Data"=>"");
 	}
 
@@ -92,8 +93,7 @@ function fUpdateTokenKey(){
 	}
 	$AccountController = new AccountDA;
 	if (strlen($tokenKey)>0) {
-		$AccountController->updateTokenkey($accountId, $tokenKey);
-		
+		$AccountController->updateTokenkey($accountId, $tokenKey);		
 	}
 
     // return value
