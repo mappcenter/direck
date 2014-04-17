@@ -13,10 +13,11 @@ class AccountDA {
 	public $ModifiedDate = "";
 	public $Status = "";
 	public $TokenKey="";
+	public $DeviceId="";
 
-	public function insert($iName, $iPhoneNumber){
+	public function insert($iName, $iPhoneNumber, $iDeviceId){
 		global $mysql, $tb_prefix;
-		$mysql->query("INSERT INTO `".$tb_prefix."account` (`Name`, `PhoneNumber`, `CreatedDate`, `Status`) VALUES ('".$iName."', '".$iPhoneNumber."', '".time()."', 1)");
+		$mysql->query("INSERT INTO `".$tb_prefix."account` (`Name`, `PhoneNumber`, `CreatedDate`, `Status`, `DeviceId`) VALUES ('".$iName."', '".$iPhoneNumber."', '".time()."', 1, '".$iDeviceId."')");
 		return true;
 	}
 
@@ -38,11 +39,11 @@ class AccountDA {
 		return true;
 	}
 
-    public function checkPhoneNumber($InputPhoneNumber){
+    public function checkPhoneNumber($InputPhoneNumber, $iDeviceId){
     	global $mysql, $tb_prefix;
 		$data = 0;
 		$order_sql = "ORDER BY ID ASC";
-		$where_sql = "WHERE `PhoneNumber` = '".$InputPhoneNumber."' and `status`=1";
+		$where_sql = "WHERE `PhoneNumber` = '".$InputPhoneNumber."' AND `DeviceId` = '".$iDeviceId."' and `status`=1";
 
 		$query = $mysql->query("SELECT Count(ID) AS Total FROM `".$tb_prefix."account` $where_sql $order_sql ;");
 		while ($rs = $mysql->fetch_array($query)) {
@@ -67,6 +68,7 @@ class AccountDA {
 			$tmpAccount->ModifiedDate = $rs['ModifiedDate'];
 			$tmpAccount->Status = $rs['Status'];
 			$tmpAccount->TokenKey = $rs['TokenKey'];
+			$tmpAccount->DeviceId = $rs['DeviceId'];
 			$data[] = $tmpAccount;
 		}
 		return $data;
@@ -111,13 +113,14 @@ class AccountDA {
 			$this->ModifiedDate = $rs['ModifiedDate'];
 			$this->Status = $rs['Status'];
 			$this->TokenKey = $rs['TokenKey'];
+			$tmpAccount->DeviceId = $rs['DeviceId'];
 		}
 		return $this;
 	} 
 
-	public function getByPhoneNumber($InputPhoneNumber){
+	public function getByPhoneNumber($InputPhoneNumber, $iDeviceId){
 		global $mysql, $tb_prefix;
-		$where_sql = "WHERE `Status` = 1 AND `PhoneNumber`='".$InputPhoneNumber."'";
+		$where_sql = "WHERE `Status` = 1 AND `PhoneNumber`='".$InputPhoneNumber."' AND `DeviceId` = '".$iDeviceId."' ";
 		$order_sql = "ORDER BY ID DESC";
 
 		$query = $mysql->query("SELECT * FROM `".$tb_prefix."account` $where_sql $order_sql ;");
@@ -129,6 +132,7 @@ class AccountDA {
 			$this->ModifiedDate = $rs['ModifiedDate'];
 			$this->Status = $rs['Status'];
 			$this->TokenKey = $rs['TokenKey'];
+			$tmpAccount->DeviceId = $rs['DeviceId'];
 		}
 		return $this;
 	}

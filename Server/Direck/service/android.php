@@ -44,6 +44,7 @@ function fCheckToken($iFunction, $iParam, $iTime, $iToken){
 function fCreateAccount(){
 	$userName = fGetFormData('name');
 	$userPhoneNumber = fGetFormData('phonenumber');
+	$userDeviceId = fGetFormData('deviceid');
 
 	//Check Token
 	$clientAction = fGetFormData('action');
@@ -57,18 +58,21 @@ function fCreateAccount(){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Name or PhoneNumber","Data"=>"");
 	}
 
+	$userDeviceId = strtoupper(md5($userDeviceId));
     $AccountController = new AccountDA;
-    if(!$AccountController->checkPhoneNumber($userPhoneNumber)){
-        $resultValue = $AccountController->insert($userName, $userPhoneNumber);
+    if(!$AccountController->checkPhoneNumber($userPhoneNumber, $userDeviceId)){
+        $resultValue = $AccountController->insert($userName, $userPhoneNumber, $userDeviceId);
 		if(!$resultValue){
 			return Array("ErrorCode"=>3,"Message"=>"Create Account Fail","Data"=>"");
 		}
-    }else {
-		
-		return Array("ErrorCode"=>2,"Message"=>"Existed phone number","Data"=>"");
-	}
+    }
 
-	$userValue = $AccountController->getByPhoneNumber($userPhoneNumber);
+    //else {
+    //	$userValue = $AccountController->getByPhoneNumber($userPhoneNumber, $userDeviceId);
+	//	return Array("ErrorCode"=>1,"Message"=>"Create Successful", "Data"=>$userValue);
+	//}
+
+	$userValue = $AccountController->getByPhoneNumber($userPhoneNumber, $userDeviceId);
 	if(!$userValue){
 		return Array("ErrorCode"=>3,"Message"=>"Create Account Fail","Data"=>"");
 	}
@@ -203,7 +207,12 @@ function fSharePoint(){
 	$listFriendId = explode(",", $friendIds);
 	if(count($listFriendId)>0){
 		for($x=0;$x<count($listFriendId);$x++){
-			$tmpFriendId = intval($listFriendId[$x]);
+			$tmpFriendData = $listFriendId[$x];
+			$tmpFriendDataList = explode("-", $friendIds);
+
+			$tmpFriendId = intval($tmpFriendDataList[0]);
+			$tmpFriendPhone = $tmpFriendDataList[1];
+			echo $tmpFriendId."::".$tmpFriendPhone;
 			if($tmpFriendId>0){
 				//echo $newPointId."".$listFriendId[$x]."<br>";
 				if ($x==0) { //insert only 1 record to account share
