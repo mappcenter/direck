@@ -208,11 +208,43 @@ function fSharePoint(){
 	if(count($listFriendId)>0){
 		for($x=0;$x<count($listFriendId);$x++){
 			$tmpFriendData = $listFriendId[$x];
-			$tmpFriendDataList = explode("-", $friendIds);
+			$tmpFriendDataList = explode("-", $tmpFriendData);
 
 			$tmpFriendId = intval($tmpFriendDataList[0]);
 			$tmpFriendPhone = $tmpFriendDataList[1];
-			echo $tmpFriendId."::".$tmpFriendPhone;
+
+
+			if((strlen($tmpFriendPhone)>0){
+				$AccountController = new AccountDA;
+				$listFriendAccount = $AccountController->getListByPhoneNumber($tmpFriendPhone);
+				if(count($listFriendAccount)>0){
+
+					if (count($listFriendAccount)>=2){
+						$ShareInfoController->insert($accountId, $newPointId, 0, 0,1); //view status : 1 ,  view already 	
+					}else {
+						$ShareInfoController->insert($accountId, $newPointId, $listFriendAccount[0]->Id, 0,1); //view status : 1 ,  view already	
+					}
+					
+
+					for($j=0;$j<count($listFriendAccount);$j++){
+						$friendAccount = $listFriendAccount[j];
+
+						$ShareInfoController->insert($friendAccount->Id, $newPointId, $accountId, 1,0); //view status : 0 , not view yet
+						$hostAccount = $AccountController->getById($accountId);
+						if($friendAccount){
+							$gcm = new GCM;
+							$registatoin_ids = array($friendAccount->TokenKey);
+							$message = array("direck_msg" => $hostAccount->Name.' shared to you a location');
+							$result = $gcm->send_notification($registatoin_ids, $message);
+						}
+					}
+
+				}
+				
+			}
+
+			/* Old - Check FriendID
+			//echo $tmpFriendId."::".$tmpFriendPhone;
 			if($tmpFriendId>0){
 				//echo $newPointId."".$listFriendId[$x]."<br>";
 				if ($x==0) { //insert only 1 record to account share
@@ -235,7 +267,7 @@ function fSharePoint(){
 				}
 				
 			}
-			
+			*/
 		}
 	}
 	

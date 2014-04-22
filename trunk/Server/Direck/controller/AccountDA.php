@@ -136,5 +136,27 @@ class AccountDA {
 		}
 		return $this;
 	}
+
+	public function getListByPhoneNumber($InputPhoneNumber){
+		global $mysql, $tb_prefix;
+		$data = array();
+		$where_sql = "WHERE `Status` = 1 AND `PhoneNumber`='".$InputPhoneNumber."' ";
+		$order_sql = "ORDER BY ID DESC";
+
+		$query = $mysql->query("SELECT * FROM `".$tb_prefix."account` $where_sql $order_sql ;");
+		while ($rs = $mysql->fetch_array($query)) {
+			$tmpAccount = new AccountDA;
+			$tmpAccount->Id = $rs['ID'];
+			$tmpAccount->Name = $rs['Name'];
+			$tmpAccount->PhoneNumber = $rs['PhoneNumber'];
+			$tmpAccount->CreatedDate = $rs['CreatedDate'];
+			$tmpAccount->ModifiedDate = $rs['ModifiedDate'];
+			$tmpAccount->Status = $rs['Status'];
+			$tmpAccount->TokenKey = $rs['TokenKey'];
+			$tmpAccount->DeviceId = $rs['DeviceId'];
+			$data[] = $tmpAccount;
+		}
+		return $data;
+	}
 }
 ?>
