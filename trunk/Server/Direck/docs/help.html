@@ -1,0 +1,167 @@
+﻿<html>
+ <script src="script.js"></script>
+<style type="text/css">
+.question {
+background: #d4e3e5;
+text-align: justify;
+font-weight: bold;
+}
+.question a {
+text-decoration: none;
+}
+.answer {
+background: #edf0f2;
+text-align: justify;
+margin: 1px;
+padding: 2px;
+}
+
+.a {
+text-decoration: none;
+}
+
+</style>
+<body>
+
+ <a href="#" onclick="showHideDiv1('vi')" >Tiếng Việt
+</a> --
+ <a href="#" onclick="showHideDiv1('en')" >
+English 
+</a>
+<div id ="vi" style="display:none;">
+<table border="1" id="alternatecolor">
+ <tr> <td>
+ <div id="Q1" class="question" >
+ <a href="#" onclick="showHideDiv('A1')" >
+	#1.	Làm thế nào tôi có thể chia sẻ với bạn bè thông qua ứng dụng này?
+</a>
+</div>
+<div id="A1" class="answer" style="display:none;">
+	 Bạn cần 3 điều kiện sau: 
+<br />- Máy bạn có cài đặt chương trình và đăng kí với số điện thoại mà bạn đang sử dụng. ( Lưu ý các bạn bè của bạn có thể chia sẻ với bạn thông qua số điện thoại này nên bạn cần nhập chính xác số điện thoại của mình)
+<br />-	Bạn của bạn cũng cần cài chương trình và đăng kí với số điện thoại chính xác của họ.
+<br />-	Bạn có lưu số điện thoại của người bạn trong danh bạ của mình. 
+</div>
+ </td>  </tr>
+ 
+ <tr> <td>
+ <div id="Q2" class="question" >
+ <a href="#" onclick="showHideDiv('A2')" >
+	#2.	Bản đồ không hiển thị vị trí hiện thời của tôi? 
+</a>
+</div>
+<div id="A2" class="answer" style="display:none;">
+	 - Đảm bảo bạn đã bật các tính năng tìm vị trí hiện thời trên máy của mình. Để kiểm tra bạn vào Setting -> Location and Security -> Bật các chức năng cho phép tìm vị trí hiện thời của bạn. 
+<br /> - Bạn có thể kiểm tra bằng cách vào Google Map  để kiểm tra Google Map có tìm được vị trí hiện thời của bạn hay không. Nếu Google Map tìm dc thì ứng dụng cũng sẽ hoạt động tương ứng do ứng dụng sử dụng chức năng định vị từ Google Map.
+
+</div>
+ </td>  </tr>
+ <tr> <td>
+ <div id="Q3" class="question" >
+ <a href="#" onclick="showHideDiv('A3')" >
+	#3.	Danh sách bạn bè của tôi không có ai hoặc không đủ? 
+</a>
+</div>
+<div id="A3" class="answer" style="display:none;">
+	 - Từ màn hình Danh sách bạn bè, chọn Phím Menu -> Cập nhật bạn bè. Hệ thống sẽ tự động kiểm tra xem có người bạn nào của bạn có sử dụng ứng dụng hay không và hiển thị lên màn hình. 
+<br /> - Bạn cần đảm bảo những người cần chia sẻ có cài đặt ứng dụng và trong danh bạ của bạn có lưu số điện thoại của người này ( số điện thoại được sử dụng để đăng kí ứng dụng)
+ 
+</div>
+ </td>  </tr>
+ <tr> <td>
+ <div id="Q4" class="question" >
+ <a href="#" onclick="showHideDiv('A4')" >
+	#4.	Mọi người có biết vị trí hiện thời của tôi không? 
+</a>
+</div>
+<div id="A4" class="answer" style="display:none;">
+	 - Ứng dụng không tự động thu thập cũng như gửi vị trí của bạn cho bất kì ai. 
+<br /> - Ứng dụng chỉ thực hiện khi bạn chủ động chia sẻ 1 địa điểm cho mọi người thông qua chức năng chia sẻ. 
+<br /> - Ở trạng thái bình thường, ứng dụng không gửi bất kì thông tin nào của bạn cho mọi người.
+
+</div>
+ </td>  </tr>	
+ <tr> <td>
+ <div id="Q5" class="question" >
+ <a href="#" onclick="showHideDiv('A5')" >
+	#5.	Tại sao ứng dụng cần truy xuất Danh bạ của tôi?
+</a>
+</div>
+<div id="A5" class="answer" style="display:none;">
+	 - Ứng dụng cần danh bạ của bạn để tự động tìm những người bạn có sử dụng chương trình, thông qua đó bạn có thể chia sẻ vị trí, địa điểm của bạn với những người đó.
+</div>
+ </td>  </tr>
+ 
+
+ </table>
+ </div>
+ <div id="en" style="display:none;">
+ <table border="1" id="alternatecolor">
+ <tr> <td>
+ <div id="eQ1" class="question" >
+ <a href="#" onclick="showHideDiv('eA1')" >
+	#1.	How can I share a location to my friend by using this app? 
+</a>
+</div>
+<div id="eA1" class="answer" style="display:none;">
+There are 3 things that you need to fulfill: 
+<br />- This app is installed in your phone, and registered with your phone number.
+<br />-	Your friend also install this app in his phone and register with his phone number.
+<br />-	His phone number are existed in your contact phone list. 
+</div>
+ </td>  </tr>
+ 
+ <tr> <td>
+ <div id="eQ2" class="question" >
+ <a href="#" onclick="showHideDiv('eA2')" >
+	#2.	The map didn’t automatically show my location? 
+</a>
+</div>
+<div id="eA2" class="answer" style="display:none;">
+	 - Make sure you already turned on the location services in your phone. You can check this by access to Phone Setting – Location and Security – Turn on all the services (both Network and GPS). 
+<br /> - You can try to click on the location symbol in the Map of app( the radio symbol) to force Map search your location. If it still not be able to search your location, please restart your phone to reactive the location services.
+<br /> - You can also cross check by using Google Map in your phone. If you can access your location by Google Map, than this app also work well due to it’s using Google Map services for locating your position.
+</div>
+ </td>  </tr>
+ <tr> <td>
+ <div id="eQ3" class="question" >
+ <a href="#" onclick="showHideDiv('eA3')" >
+	#3.	My shared friend list is empty or not updated enough?  
+</a>
+</div>
+<div id="eA3" class="answer" style="display:none;">
+	 - From Friend List Screen. Click on the Menu option – Refresh friend list. This action will update your friend list. 
+<br /> - Notes: You need to make sure your friend also installed this app and registered with his phone number . That phone number must be existed in your contact and they are exactly the same ( the one in your contact and the one used for registering).
+ 
+</div>
+ </td>  </tr>
+ <tr> <td>
+ <div id="eQ4" class="question" >
+ <a href="#" onclick="showHideDiv('eA4')" >
+	#4.	Is there anybody able to see my location by using this app?  
+</a>
+</div>
+<div id="eA4" class="answer" style="display:none;">
+	 - First thing, the application is not able to send your location to anyone automatically.  
+<br /> - Application is only share the location which you like to specific friends from your friend list. No one else can see and know your location 
+<br /> - At normal state, application will NOT send any information about your location to anyone.
+
+</div>
+ </td>  </tr>	
+ <tr> <td>
+ <div id="eQ5" class="question" >
+ <a href="#" onclick="showHideDiv('eA5')" >
+	#5.	Why does application need to access my contact phone list?
+</a>
+</div>
+<div id="eA5" class="answer" style="display:none;">
+	 - The application need your contact list to search who are using this app (base on phone number) and  show those friend in application, then you can select and share a location to those friends.
+</div>
+ </td>  </tr>
+ 
+
+ </table>
+
+ </div>
+</body>
+</html>
