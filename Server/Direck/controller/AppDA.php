@@ -3,19 +3,11 @@ if (!defined('IN_DIRECK')) die("Hack");
 
 
 class AppDA {
-	/*
-	public $Version = "";
-	public $UpdateApp=0; //0: no update, 1: optional update, 2 : must update
-	public $LinkUpdate="";
-	public $AdType = 0; //0: no ad; 1:admod; 2:adapp
-	public $URL_AD = "";
-	public $URL_Link="";
-	*/
 	public $Version = "";
 	public $IsUpdate = 0; 
 	public $MessageUpdate = "";
 	public $LinkUpdate = "";
-	public $ShowAdv = 0;
+	public $ShowAdv = 1;
 	public $AdvType = ""; // ADMOD :: HOME
 	public $AdvLink = ""; //
 	public $AdvImage = "";

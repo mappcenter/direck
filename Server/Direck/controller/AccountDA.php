@@ -113,7 +113,7 @@ class AccountDA {
 			$this->ModifiedDate = $rs['ModifiedDate'];
 			$this->Status = $rs['Status'];
 			$this->TokenKey = $rs['TokenKey'];
-			$tmpAccount->DeviceId = $rs['DeviceId'];
+			$this->DeviceId = $rs['DeviceId'];
 		}
 		return $this;
 	} 
@@ -132,7 +132,7 @@ class AccountDA {
 			$this->ModifiedDate = $rs['ModifiedDate'];
 			$this->Status = $rs['Status'];
 			$this->TokenKey = $rs['TokenKey'];
-			$tmpAccount->DeviceId = $rs['DeviceId'];
+			$this->DeviceId = $rs['DeviceId'];
 		}
 		return $this;
 	}

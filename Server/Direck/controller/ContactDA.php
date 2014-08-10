@@ -29,11 +29,12 @@ class ContactDA {
 		global $mysql, $tb_prefix;
 		$data = array();
 		$order_sql = " group by con.ID,con.AccountID,con.ContactName,con.ContactNumber, FROM_UNIXTIME(con.ModifiedDate),con.Status ";
-		$where_sql = "WHERE `AccountID` = ".$iAccountID." and acc.status=1 ";
+		//$where_sql = "WHERE `AccountID` = ".$iAccountID." and acc.status=1 ";
+		$where_sql = "WHERE `AccountID` = ".$iAccountID;
 		$query_sql ="select con.ID,con.AccountID,con.ContactName,con.ContactNumber, FROM_UNIXTIME(con.ModifiedDate) as ModifiedDate,con.Status,
 							max(ifnull(acc.ID,0)) as FriendID 
-							from `".$tb_prefix."contact` con 
-							inner join `".$tb_prefix."account` acc on con.ContactNumber = acc.PhoneNumber $where_sql $order_sql ;";
+							from `".$tb_prefix."contact` con  
+							left join `".$tb_prefix."account` acc on con.ContactNumber = acc.PhoneNumber $where_sql $order_sql ;";
 
 		$query = $mysql->query($query_sql);
 		while ($rs = $mysql->fetch_array($query)) {
