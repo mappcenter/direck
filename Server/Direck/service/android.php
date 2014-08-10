@@ -30,7 +30,7 @@ function fCheckToken($iFunction, $iParam, $iTime, $iToken){
 	if($currentTime > $checkTime) {
 		return false;
 	}
-	$ServerToken = strtoupper(md5($iFunction.constant("MD5_KEY").$iTime));
+	$ServerToken = strtoupper(md5($iFunction.$iParam.constant("MD5_KEY").$iTime));
 	$ClientToken = strtoupper($iToken);
 	//echo "server:".$iFunction.constant("MD5_KEY").$iTime."<br>";
 	//echo $ServerToken."::".$ClientToken."<br>";
@@ -50,7 +50,8 @@ function fCreateAccount(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $userName, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
@@ -88,7 +89,8 @@ function fUpdateTokenKey(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
@@ -112,7 +114,8 @@ function fUploadContact(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
@@ -151,7 +154,8 @@ function fGetListPoint(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
@@ -181,7 +185,8 @@ function fSharePoint(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
@@ -214,7 +219,7 @@ function fSharePoint(){
 			$tmpFriendPhone = $tmpFriendDataList[1];
 
 
-			if((strlen($tmpFriendPhone)>0){
+			if(strlen($tmpFriendPhone)>0){
 				$AccountController = new AccountDA;
 				$listFriendAccount = $AccountController->getListByPhoneNumber($tmpFriendPhone);
 				if(count($listFriendAccount)>0){
@@ -227,13 +232,13 @@ function fSharePoint(){
 					
 
 					for($j=0;$j<count($listFriendAccount);$j++){
-						$friendAccount = $listFriendAccount[j];
+						//$friendAccount = $listFriendAccount[j];
 
-						$ShareInfoController->insert($friendAccount->Id, $newPointId, $accountId, 1,0); //view status : 0 , not view yet
+						$ShareInfoController->insert($listFriendAccount[$j]->Id, $newPointId, $accountId, 1,0); //view status : 0 , not view yet
 						$hostAccount = $AccountController->getById($accountId);
-						if($friendAccount){
+						if($listFriendAccount[$j]){
 							$gcm = new GCM;
-							$registatoin_ids = array($friendAccount->TokenKey);
+							$registatoin_ids = array($listFriendAccount[$j]->TokenKey);
 							$message = array("direck_msg" => $hostAccount->Name.' shared to you a location');
 							$result = $gcm->send_notification($registatoin_ids, $message);
 						}
@@ -283,7 +288,8 @@ function fDeletePoint(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $shareId, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
@@ -313,7 +319,8 @@ function fBookmarkPoint(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
@@ -352,7 +359,8 @@ function fBookmarkLocation(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $accountId, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
@@ -380,7 +388,8 @@ function fUpdateViewStatus(){
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, $shareID, $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 	
@@ -404,7 +413,8 @@ function fGetAppInfo() {
 	$clientAction = fGetFormData('action');
 	$clientTime = fGetFormData('time');
 	$clientToken= fGetFormData('token');
-	if(!fCheckToken($clientAction, "$shareID", $clientTime, $clientToken)){
+	$paramMD5= fGetFormData('accountid');
+	if(!fCheckToken($clientAction, $paramMD5, $clientTime, $clientToken)){
 		return Array("ErrorCode"=>3,"Message"=>"Invalid Token","Data"=>"");
 	}
 
