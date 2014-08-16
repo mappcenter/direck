@@ -14,6 +14,7 @@ class AccountDA {
 	public $Status = "";
 	public $TokenKey="";
 	public $DeviceId="";
+	public $DeviceOS="";
 
 	public function insert($iName, $iPhoneNumber, $iDeviceId){
 		global $mysql, $tb_prefix;
@@ -33,9 +34,9 @@ class AccountDA {
 		return true;
 	}
 
-	public function updateTokenkey($iAccountId, $iTokenKey){
+	public function updateTokenkey($iAccountId, $iTokenKey, $iDeviceOS){
 		global $mysql, $tb_prefix;
-		$mysql->query("UPDATE `".$tb_prefix."account` SET `TokenKey`='".$iTokenKey."' WHERE `ID`='".$iAccountId."'");
+		$mysql->query("UPDATE `".$tb_prefix."account` SET `TokenKey`='".$iTokenKey."', `DeviceOS`='".$iDeviceOS."' WHERE `ID`='".$iAccountId."'");
 		return true;
 	}
 
@@ -69,6 +70,7 @@ class AccountDA {
 			$tmpAccount->Status = $rs['Status'];
 			$tmpAccount->TokenKey = $rs['TokenKey'];
 			$tmpAccount->DeviceId = $rs['DeviceId'];
+			$tmpAccount->DeviceOS = $rs['DeviceOS'];
 			$data[] = $tmpAccount;
 		}
 		return $data;
@@ -114,6 +116,7 @@ class AccountDA {
 			$this->Status = $rs['Status'];
 			$this->TokenKey = $rs['TokenKey'];
 			$this->DeviceId = $rs['DeviceId'];
+			$this->DeviceOS = $rs['DeviceOS'];
 		}
 		return $this;
 	} 
@@ -133,6 +136,7 @@ class AccountDA {
 			$this->Status = $rs['Status'];
 			$this->TokenKey = $rs['TokenKey'];
 			$this->DeviceId = $rs['DeviceId'];
+			$this->DeviceOS = $rs['DeviceOS'];
 		}
 		return $this;
 	}
@@ -154,6 +158,7 @@ class AccountDA {
 			$tmpAccount->Status = $rs['Status'];
 			$tmpAccount->TokenKey = $rs['TokenKey'];
 			$tmpAccount->DeviceId = $rs['DeviceId'];
+			$tmpAccount->DeviceOS = $rs['DeviceOS'];
 			$data[] = $tmpAccount;
 		}
 		return $data;

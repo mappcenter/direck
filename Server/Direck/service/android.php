@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 #========== INCLUDE ===========#
 include_once('./controller/AccountDA.php');
 include_once('./controller/ContactDA.php');
@@ -7,6 +7,7 @@ include_once('./controller/AppDA.php');
 include_once('./controller/ShareInfoDA.php');
 include_once('./controller/PointShareInfoEnt.php');
 include_once('./controller/GCM.php');
+include_once('./controller/APNS.php');
 #========== DEFINE ===========#
 # ErrorCode = 0 : Success - No Message
 # ErrorCode = 1 : Success - With Message
@@ -99,7 +100,7 @@ function fUpdateTokenKey(){
 	}
 	$AccountController = new AccountDA;
 	if (strlen($tokenKey)>0) {
-		$AccountController->updateTokenkey($accountId, $tokenKey);		
+		$AccountController->updateTokenkey($accountId, $tokenKey, "ANDROID");		
 	}
 
     // return value
@@ -133,7 +134,7 @@ function fUploadContact(){
 					//Check Existed PhoneNumber
 					if(!$ContactController->checkPhoneNumber($contactItemDetail[1],$accountId)){
 						//Insert If OK
-						$ContactController->insert($accountId, $contactItemDetail[0], $contactItemDetail[1], 0);
+						$ContactController->insert($accountId, str_replace("'","",$contactItemDetail[0]), str_replace("'","",$contactItemDetail[1]), 0);
 					}			
 				}
 			}
@@ -236,10 +237,16 @@ function fSharePoint(){
 
 						$ShareInfoController->insert($listFriendAccount[$j]->Id, $newPointId, $accountId, 1,0); //view status : 0 , not view yet
 						$hostAccount = $AccountController->getById($accountId);
-						if($listFriendAccount[$j]){
+						if($listFriendAccount[$j] && $listFriendAccount[$j]->DeviceOS=="ANDROID"){
 							$gcm = new GCM;
 							$registatoin_ids = array($listFriendAccount[$j]->TokenKey);
-							$message = array("direck_msg" => $hostAccount->Name.' shared to you a location');
+							$message = array("direck_msg" => $hostAccount->Name.' đã chia sẻ với bạn một địa điểm.');
+							$result = $gcm->send_notification($registatoin_ids, $message);
+						}else{
+						
+							$gcm = new APNS;
+							$registatoin_ids = $listFriendAccount[$j]->TokenKey;
+							$message = $hostAccount->Name.' đã chia sẻ với bạn một địa điểm.';
 							$result = $gcm->send_notification($registatoin_ids, $message);
 						}
 					}
